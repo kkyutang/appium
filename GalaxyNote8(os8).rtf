@@ -1,0 +1,2069 @@
+{\rtf1\ansi\ansicpg949\cocoartf2759
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 const \{ remote \} = require('webdriverio');\
+\
+const capabilities = \{\
+  platformName: 'Android',\
+  'appium:automationName': 'UiAutomator2',\
+  'appium:deviceName': 'Android',\
+  'appium:noReset': 'true',\
+  'appium:autoGrantPermissions': 'true', //Android\uc0\u50640 \u49436  \u44428 \u54620 \u51012  \u51088 \u46041 \u51004 \u47196  \u54728 \u50857 \
+\};\
+\
+const wdOpts = \{\
+  hostname: process.env.APPIUM_HOST || 'localhost',\
+  port: parseInt(process.env.APPIUM_PORT, 10) || 4723,\
+  logLevel: 'info',\
+  capabilities,\
+\};\
+\
+async function clickElement(driver, xpath) \{\
+  const element = await driver.$(xpath);\
+  await element.click();\
+\}\
+\
+async function setValue(driver, xpath, value) \{\
+  const element = await driver.$(xpath);\
+  await element.setValue(value);\
+\}\
+\
+async function touchAction(driver, xpath, action) \{\
+  const element = await driver.$(xpath);\
+  await element.touchAction(action);\
+\}\
+\
+async function tapElement(driver, accessibilityId) \{\
+  const element = await driver.$(`android=new UiSelector().description("$\{accessibilityId\}")`);\
+  await element.click();\
+\}\
+\
+function getErrorLineNumber(e) \{\
+  if (!(e instanceof Error)) \{\
+      e = new Error(e);\
+  \}\
+\
+  const lineRegex = /runTest .+?:(\\d+):/;\
+  const match = lineRegex.exec(e.stack);\
+\
+  if (match) \{\
+      const lineNumber = match[1];\
+      return lineNumber;\
+  \} else \{\
+      return 0;\
+  \}\
+\}\
+\
+function sendSlackMessage(message)\{\
+  const myHeaders = new Headers();\
+  myHeaders.append("Content-type", "application/json; charset=utf-8");\
+  myHeaders.append("Authorization", "Bearer xoxb-6737288415267-6737381495430-VbudiILwACEwwN9JOVSiggTR");\
+\
+  const raw = JSON.stringify(\{ "channel": "C06MP8Q4ZNX", "text": message \});\
+  \
+  const requestOptions = \{\
+    method: 'POST',\
+    headers: myHeaders,\
+    body: raw,\
+    redirect: 'follow'\
+  \};\
+  \
+  fetch("https://slack.com/api/chat.postMessage", requestOptions)\
+    .then(response => response.text())\
+    .then(result => console.log(result))\
+    .catch(error => console.log('error', error));\
+\}\
+\
+async function runTest() \{\
+  const driver = await remote(wdOpts);\
+\
+  try \{\
+    // \uc0\u54056 \u53412 \u51648 \u47749 \u44284  \u50529 \u54000 \u48708 \u54000 \u47749 \u51012  \u52286 \u50500 \u49436  \u49688 \u51221 \
+    await clickElement(driver, '//*[@text="\uc0\u52852 \u52852 \u50724 \u53665 "]');\
+\
+    // 3\uc0\u52488 \u45824 \u44592 \
+    await driver.pause(5000);\
+\
+    // \uc0\u52292 \u54021  \u50500 \u51060 \u53080 \u51012  \u52286 \u50500 \u49436  \u53364 \u47533 \
+    await clickElement(driver, '//*[@text="\uc0\u52292 \u54021 "]');\
+\
+    // + \uc0\u50500 \u51060 \u53080 \u51012  \u52286 \u50500 \u49436  \u53364 \u47533  (XPath \u44050 \u51004 \u47196  \u49688 \u51221 )\
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u45824 \u54868  \u49884 \u51089 \u54616 \u44592 "]');\
+\
+    // \uc0\u51068 \u48152  \u52292 \u54021  \u53581 \u49828 \u53944 \u47484  \u52286 \u50500 \u49436  \u53364 \u47533  (XPath \u44050 \u51004 \u47196  \u49688 \u51221 )\
+    await clickElement(driver, '//android.widget.TextView[@text="\uc0\u51068 \u48152 \u52292 \u54021 "]');\
+\
+    // \uc0\u52395  \u48264 \u51704  \u50976 \u51200  \u53364 \u47533  (XPath \u44050 \u51004 \u47196  \u49688 \u51221 )\
+    await clickElement(driver, '(//android.widget.RelativeLayout[@resource-id="com.kakao.talk:id/deactive_background"])[1]/android.view.ViewGroup');\
+\
+    // \uc0\u50976 \u51200  \u49440 \u53469  \u54980  \u54869 \u51064  \u48260 \u53948  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+\
+    for (let i = 1; i <= 2; i++) \{\
+      // \uc0\u53581 \u49828 \u53944  \u54596 \u46300 \u47484  \u52286 \u50500 \u49436  n\u54924  \u51077 \u47141 \
+      await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u53580 \u49828 \u53944  \u53581 \u49828 \u53944  $\{i\}\u54924  \u51204 \u49569 `);\
+\
+      // \uc0\u51204 \u49569  \u48260 \u53948  \u53364 \u47533 \u54616 \u44592 \
+      await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');\
+    \}\
+\
+    //5\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(5000);\
+\
+    // \uc0\u47700 \u49884 \u51648  \u47217 \u54532 \u47112 \u49828  \u46041 \u51089 \u54616 \u44592  or \u47784 \u46304  \u45824 \u54868 \u48169 \u50640 \u49436  \u47700 \u49884 \u51648  \u49325 \u51228 \
+    for (let i = 1; i <= 2; i++) \{\
+      await touchAction(driver, `//android.widget.TextView[@resource-id="com.kakao.talk:id/message" and @text="\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u53580 \u49828 \u53944  \u53581 \u49828 \u53944  $\{i\}\u54924  \u51204 \u49569 "]`, 'longPress');\
+      await clickElement(driver, '//*[@text="\uc0\u49325 \u51228 "]');\
+\
+      if (i === 1) \{\
+        // \uc0\u47784 \u46304  \u45824 \u54868 \u48169 \u50640 \u49436  \u47700 \u49884 \u51648  \u49325 \u51228 \
+        await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+        await clickElement(driver, '//*[@text="\uc0\u49325 \u51228 "]');\
+      \}\
+      else \{\
+        // \uc0\u51060  \u44592 \u44592 \u50640 \u49436  \u47700 \u49884 \u51648  \u49325 \u51228 \
+        await clickElement(driver, '//*[@text="\uc0\u51060  \u44592 \u44592 \u50640 \u49436  \u49325 \u51228 "]');\
+        await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+        await clickElement(driver, '//*[@text="\uc0\u49325 \u51228 \u54616 \u44592 "]');\
+        await clickElement(driver, '//*[@text="\uc0\u49325 \u51228 "]');\
+      \}\
+    \}\
+    // \uc0\u47553 \u53356  \u51204 \u49569 \u54616 \u44592 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `naver.com`);\
+\
+    // \uc0\u51204 \u49569  \u48260 \u53948  \u53364 \u47533 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');\
+\
+    // \uc0\u54616 \u51060 \u54140 \u47553 \u53356  \u47568 \u54413 \u49440  \u51204 \u49569 \u54616 \u44592 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `\uc0\u48372 \u51060 \u49828 \u53665 , \u54168 \u51060 \u49828 \u53665 , 110-1234-1234, 010-1234-5678`);\
+\
+    // \uc0\u51204 \u49569  \u48260 \u53948  \u53364 \u47533 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');\
+\
+    // \uc0\u53581 \u49828 \u53944 \u47564  500\u51088  \u51204 \u49569 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 \
+  500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 \
+  500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 \
+  500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 \
+  500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 `); // \u51077 \u47141 \u54624  \u53581 \u49828 \u53944  \u45236 \u50857 \u51004 \u47196  \u49688 \u51221 \
+\
+    /* const textField4 = await driver.$('//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]'); // XPath \uc0\u44050 \u51004 \u47196  \u49892 \u51228  \u54868 \u47732 \u50640  \u45824 \u54620  \u51221 \u48372 \u47196  \u49688 \u51221 \
+    await textField4.setValue(`500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 \
+    500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 \
+    500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 \
+    500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 \
+    500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 `); // \u51077 \u47141 \u54624  \u53581 \u49828 \u53944  \u45236 \u50857 \u51004 \u47196  \u49688 \u51221 */\
+\
+    // \uc0\u51204 \u49569  \u48260 \u53948  \u53364 \u47533 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');\
+\
+    // \uc0\u51060 \u47784 \u54000 \u53080  \u53485  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/emoticon_button"]');\
+\
+    try \{\
+      await clickElement(driver, '//*[@text="\uc0\u45796 \u50868 \u47196 \u46300 "]');\
+    \} catch \{ \}\
+\
+    for (let i = 1; i <= 4; i++) \{\
+      await touchAction(driver, `(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[$\{i\}]`, [\
+        \{ action: 'tap', x: 0, y: 0 \},\
+        \{ action: 'tap', x: 0, y: 0 \}\
+      ]);\
+    \}\
+\
+    /*\
+    // \uc0\u51060 \u47784 \u54000 \u53080  \u45908 \u48660 \u53485 \u54616 \u50668  \u51204 \u49569 \
+    for (let i = 1; i <= 4; i++) \{\
+      await touchAction(driver, `(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[$\{i\}]`, [\
+        \{ action: 'tap', x: 0, y: 0 \},\
+        \{ action: 'tap', x: 0, y: 0 \}\
+        ]);\
+      \
+    /*  const emoticonIcon = await driver.$(`(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[$\{i\}]`);\
+      await emoticonIcon.touchAction([\
+        \{ action: 'tap', x: 0, y: 0 \},\
+        \{ action: 'tap', x: 0, y: 0 \}\
+        ]); \
+      \}*/\
+\
+    // \uc0\u53581 \u49828 \u53944  \u51077 \u47141 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `\uc0\u51060 \u47784 \u54000 \u53080 \u44284  \u54632 \u44760  \u51204 \u49569 `);\
+    /* const textField5 = await driver.$('//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]'); // XPath \uc0\u44050 \u51004 \u47196  \u49892 \u51228  \u54868 \u47732 \u50640  \u45824 \u54620  \u51221 \u48372 \u47196  \u49688 \u51221 \
+    await textField5.setValue(`\uc0\u51060 \u47784 \u54000 \u53080 \u44284  \u54632 \u44760  \u51204 \u49569 `); // \u51077 \u47141 \u54624  \u53581 \u49828 \u53944  \u45236 \u50857 \u51004 \u47196  \u49688 \u51221  */\
+\
+    // \uc0\u51060 \u47784 \u54000 \u53080  \u53485  \u49440 \u53485  \u54980  \u45908 \u48660 \u53485 \u51004 \u47196  \u51060 \u47784 \u54000 \u53080  \u51204 \u49569 \
+    await touchAction(driver, `(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[1]`, [\
+      \{ action: 'tap', x: 0, y: 0 \},\
+      \{ action: 'tap', x: 0, y: 0 \}\
+    ]);\
+    /* const emoticonIcon = await driver.$(`(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[1]`);\
+    await emoticonIcon.touchAction([\
+      \{ action: 'tap', x: 0, y: 0 \},\
+      \{ action: 'tap', x: 0, y: 0 \}\
+      ]); */\
+\
+    // \uc0\u44592 \u48376  \u51060 \u47784 \u54000 \u53080  \u51204 \u49569 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `(\uc0\u54616 \u54616 ), (\u54616 \u53944 \u49093 ), (\u50864 \u50752 ), (\u49900 \u44033 )`);\
+    /* const textField10 = await driver.$('//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]'); // XPath \uc0\u44050 \u51004 \u47196  \u49892 \u51228  \u54868 \u47732 \u50640  \u45824 \u54620  \u51221 \u48372 \u47196  \u49688 \u51221 \
+    await textField10.setValue(`(\uc0\u54616 \u54616 ), (\u54616 \u53944 \u49093 ), (\u50864 \u50752 ), (\u49900 \u44033 )`); */\
+\
+    // \uc0\u51204 \u49569  \u48260 \u53948  \u53364 \u47533 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');\
+\
+    // \uc0\u44592 \u48376  \u51060 \u47784 \u54000 \u53080  + \u53581 \u49828 \u53944  \u51077 \u47141  \u51204 \u49569 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `(\uc0\u54616 \u54616 ), (\u54616 \u53944 \u49093 ), (\u50864 \u50752 ), (\u49900 \u44033 ) + \u44592 \u48376 \u51060 \u47784 \u54000 \u53080 \u44284  \u53581 \u49828 \u53944  \u44057 \u51060  \u51204 \u49569 `);\
+    /* const textField11 = await driver.$('//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]'); // XPath \uc0\u44050 \u51004 \u47196  \u49892 \u51228  \u54868 \u47732 \u50640  \u45824 \u54620  \u51221 \u48372 \u47196  \u49688 \u51221 \
+    await textField11.setValue(`(\uc0\u54616 \u54616 ), (\u54616 \u53944 \u49093 ), (\u50864 \u50752 ), (\u49900 \u44033 ) + \u44592 \u48376 \u51060 \u47784 \u54000 \u53080 \u44284  \u53581 \u49828 \u53944  \u44057 \u51060  \u51204 \u49569 `); */\
+\
+    // \uc0\u51204 \u49569  \u48260 \u53948  \u53364 \u47533 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');\
+\
+    /* ------------\uc0\u53581 \u49828 \u53944  500\u51088  \u51077 \u47141  \u54980  \u51060 \u47784 \u54000 \u53080  \u51652 \u51077  \u49884  \u50620 \u47103  \u45432 \u52636  \u54869 \u51064  \u50668 \u48512 \u50640  \u45824 \u54620  \u44396 \u54788  \u50668 \u48512 \u44032  \u44032 \u45733 \u54620 \u51648  \u49373 \u44033 \u51473 ..... */\
+\
+\
+    /*------------------------------------------------------------------------------------------ */\
+    // +\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u50536 \u48276  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[1]');\
+\
+    // 5\uc0\u52488  \u45824 \u44592  \
+    await driver.pause(5000);\
+\
+    // \uc0\u51204 \u52404  \u49440 \u53469 \
+    // await clickElement(driver, '//*[@text="\uc0\u51204 \u52404 "]');\
+    // x : 88 y : 2006\
+\
+    // \uc0\u53485 \u54624  \u50689 \u50669 \u51032  \u51340 \u54364  \u49444 \u51221 \
+    const tapX = 88;\
+    const tapY = 2006;\
+\
+    // \uc0\u51204 \u52404  \u44050 \u51012  \u49440 \u53469 \u54616 \u50668  \u50536 \u48276  \u51652 \u51077  \u54980  \u53945 \u51221 \u51340 \u54364  \u53485  \u54980  \u49828 \u50752 \u51060 \u54532 \u47196  \u49324 \u51652 \u51204 \u49569 \
+    try \{\
+      // \uc0\u53945 \u51221  \u51340 \u54364  \u53485  (Tap)\
+      await driver.touchAction([\
+        \{ action: 'tap', x: tapX, y: tapY \},\
+      ]);\
+\
+      // 5\uc0\u52488  \u45824 \u44592  \
+      await driver.pause(5000);\
+\
+      // \uc0\u47217 \u54532 \u47112 \u49828 \u54624  \u50836 \u49548 \u51032  XPath\
+      const elementXPath = '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/thumbnail"])[2]';\
+\
+      // \uc0\u47217 \u54532 \u47112 \u49828  (Long Press) \u48143  \u50500 \u47000 \u47196  \u49828 \u50752 \u51060 \u54532  (Swipe)\
+      await driver.touchAction([\
+        \{ action: 'press', element: await driver.$(elementXPath) \},\
+        \{ action: 'moveTo', x: 534, y: 1896 \},  // \uc0\u49828 \u50752 \u51060 \u54532  \u44144 \u47532  \u48143  \u48169 \u54693  \u51312 \u51208 \
+        \{ action: 'release' \},\
+      ]);\
+\
+      await clickElement(driver, '//*[@text="\uc0\u51204 \u49569 "]');\
+\
+      // 20\uc0\u52488  \u45824 \u44592 \
+      await driver.pause(20000);\
+    \} catch (error) \{\
+      console.error('Error:', error);\
+    \}\
+\
+    try \{\
+      // +\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+      await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+      // \uc0\u50536 \u48276  \u49440 \u53469 \u54616 \u44592 \
+      await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[1]');\
+\
+      // 5\uc0\u52488  \u45824 \u44592  \
+      await driver.pause(5000);\
+\
+      // \uc0\u51648 \u51221 \u54620 \u44275  \u53485 \
+      await driver.touchAction([\
+        \{ action: 'tap', x: tapX, y: tapY \},\
+      ]);\
+\
+      try \{\
+        // \uc0\u54869 \u51064 \u51060 \u46972 \u45716  \u53581 \u49828 \u53944 \u44032  \u51080 \u51004 \u47732  \u53364 \u47533  \u54980  \u49324 \u51652 \u52524 \u50689  \u49884 \u51089 \
+        await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+      \} catch (error) \{ \}\
+\
+      // 3\uc0\u52488  \u45824 \u44592 \
+      await clickElement(driver, '//*[@text="\uc0\u49324 \u51652  \u47926 \u50612 \u48372 \u45236 \u44592 "]');\
+\
+      // \uc0\u47217 \u54532 \u47112 \u49828 \u54624  \u50836 \u49548 \u51032  XPath\
+      const elementXPath2 = '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/thumbnail"])[2]';\
+\
+      // 5\uc0\u52488  \u45824 \u44592  \
+      await driver.pause(5000);\
+\
+      // \uc0\u47217 \u54532 \u47112 \u49828  (Long Press) \u48143  \u50500 \u47000 \u47196  \u49828 \u50752 \u51060 \u54532  (Swipe)\
+      await driver.touchAction([\
+        \{ action: 'press', element: await driver.$(elementXPath2) \},\
+        \{ action: 'moveTo', x: 534, y: 1896 \},  // \uc0\u49828 \u50752 \u51060 \u54532  \u44144 \u47532  \u48143  \u48169 \u54693  \u51312 \u51208 \
+        \{ action: 'release' \},\
+      ]);\
+\
+      // \uc0\u51204 \u49569  \u49440 \u53469 \
+      await clickElement(driver, '//*[@text="\uc0\u51204 \u49569 "]');\
+\
+      // 20\uc0\u52488  \u45824 \u44592 \
+      await driver.pause(20000);\
+    \} catch (error) \{ \}\
+\
+    // +\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u52852 \u47700 \u46972  \u54637 \u47785  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[2]');\
+\
+    try \{\
+      // \uc0\u54728 \u50857 \u51060 \u46972 \u45716  \u53581 \u49828 \u53944 \u44032  \u51080 \u51004 \u47732  \u53364 \u47533  \u54980  \u49324 \u51652 \u52524 \u50689  \u49884 \u51089 \
+      await clickElement(driver, '//*[@text="\uc0\u54728 \u50857 "]');\
+    \} catch (error) \{ \}\
+\
+    // \uc0\u49324 \u51652  \u52524 \u50689  \u49440 \u53469 \
+    await clickElement(driver, '//*[@text="\uc0\u49324 \u51652  \u52524 \u50689 "]');\
+\
+    // \uc0\u49324 \u51652  \u52524 \u50689  \u49884 \u51089 \
+    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="\uc0\u49492 \u53552 "]')\
+\
+    // \uc0\u49324 \u51652 \u52524 \u50689  \u54980  5\u52488  \u45824 \u44592 \
+    await driver.pause(5000);\
+\
+    // \uc0\u49324 \u51652  \u52524 \u50689  \u54869 \u51064  \u54980  \u51204 \u49569 \
+    await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+    await clickElement(driver, '//*[@text="\uc0\u51204 \u49569 "]');\
+\
+    // \uc0\u46041 \u50689 \u49345  \u51204 \u49569  \u54980  5\u52488  \u45824 \u44592 \
+    await driver.pause(5000);\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u52852 \u47700 \u46972  \u54637 \u47785  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[2]');\
+\
+    // \uc0\u46041 \u50689 \u49345  \u52524 \u50689 \u51004 \u47196  \u51060 \u46041 \
+    await clickElement(driver, '//*[@text="\uc0\u46041 \u50689 \u49345  \u52524 \u50689 "]');\
+\
+    // \uc0\u46041 \u50689 \u49345  \u52524 \u50689  \u49884 \u51089  \u48143  \u51333 \u47308 \
+    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="\uc0\u45433 \u54868 "]');\
+\
+    // 10\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(10000);\
+    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="\uc0\u51473 \u51648 "]');\
+\
+    // \uc0\u46041 \u50689 \u49345  \u54869 \u51064  \u54980  \u51204 \u49569 \
+    await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+    await clickElement(driver, '//*[@text="\uc0\u51204 \u49569 "]');\
+\
+    // 5\uc0\u52488  \u45824 \u44592  \u54980  + \u47700 \u45684  \u49892 \u54665 \
+    await driver.pause(5000);\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u53685 \u54868 \u54616 \u44592  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[4]');\
+\
+    // \uc0\u48372 \u51060 \u49828 \u53665  \u49440 \u53469 \
+    await clickElement(driver, '//*[@text="\uc0\u48372 \u51060 \u49828 \u53665 "]');\
+\
+    // \uc0\u48372 \u51060 \u49828 \u53665  \u44428 \u54620  \u54045 \u50629  \u48156 \u49373  \u49884  \u54728 \u50857  \u49440 \u53469  \u54980  \u45796 \u51020  \u49828 \u53485  \u49892 \u54665  \u48156 \u49373 \u54616 \u51648  \u50506 \u51012  \u49884 \u50640 \u45716  \u45796 \u51020  \u49828 \u53485  \u51088 \u46041  \u49892 \u54665 \
+    try \{\
+      // \uc0\u54728 \u50857 \u51060 \u46972 \u45716  \u53581 \u49828 \u53944 \u44032  \u51080 \u51004 \u47732  \u53364 \u47533 \
+      await clickElement(driver, '//*[@text="\uc0\u54728 \u50857 "]');\
+    \} catch (error) \{ \}\
+\
+    // 10\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(10000);\
+\
+    // \uc0\u48372 \u51060 \u49828 \u53665  \u51333 \u47308 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u53685 \u54868  \u51333 \u47308 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u53685 \u54868 \u54616 \u44592  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[4]');\
+\
+    // \uc0\u54168 \u51060 \u49828 \u53665  \u49440 \u53469 \
+    await clickElement(driver, '//*[@text="\uc0\u54168 \u51060 \u49828 \u53665 "]');\
+\
+    // \uc0\u54168 \u51060 \u49828 \u53665  \u52395  \u51652 \u51077  \u49884  \u48156 \u49373 \u54616 \u45716  \u54045 \u50629 \
+    try \{\
+      // \uc0\u54728 \u50857 \u51060 \u46972 \u45716  \u53581 \u49828 \u53944 \u44032  \u51080 \u51004 \u47732  \u53364 \u47533 \
+      await clickElement(driver, '//*[@text="\uc0\u45796 \u49884 \u48372 \u51648 \u50506 \u51020 "]');\
+    \} catch (error) \{ \}\
+\
+    // 10\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(10000);\
+\
+    // \uc0\u54168 \u51060 \u49828 \u53665  \u51333 \u47308 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u53685 \u54868  \u51333 \u47308 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u50696 \u50557 \u47700 \u49884 \u51648  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[6]');\
+\
+    // \uc0\u50696 \u50557 \u47700 \u49884 \u51648  \u53581 \u49828 \u53944  \u54596 \u46300  \u49440 \u53469  \u54980  \u53581 \u49828 \u53944  \u51077 \u47141  \u54980  \u50696 \u50557 \
+    await setValue(driver, '//android.widget.EditText[@resource-id="com.kakao.talk.jordy:id/text_content"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u53580 \u49828 \u53944  \u50696 \u50557 \u47700 \u49884 \u51648 ");\
+    /* const textField6 = await driver.$('//android.widget.EditText[@resource-id="com.kakao.talk.jordy:id/text_content"]');\
+    await textField6.setValue("\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u53580 \u49828 \u53944  \u50696 \u50557 \u47700 \u49884 \u51648 "); */\
+\
+    await clickElement(driver, '//*[@text="\uc0\u50696 \u50557 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u51068 \u51221  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[7]');\
+\
+    // \uc0\u51068 \u51221  \u46321 \u47197 \u54616 \u44592 \
+    await clickElement(driver, '//*[@text="\uc0\u51068 \u51221  \u46321 \u47197 "]');\
+\
+    // \uc0\u51068 \u51221  \u51228 \u47785  \u53581 \u49828 \u53944  \u54596 \u46300  \u49440 \u53469  \u54980  \u53581 \u49828 \u53944  \u51077 \u47141 \
+    await setValue(driver, '//android.widget.EditText[@resource-id="com.kakao.talk.calendar:id/event_title"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u51068 \u51221  \u51228 \u47785 ");\
+    /* const textField7 = await driver.$('//android.widget.EditText[@resource-id="com.kakao.talk.calendar:id/event_title"]');\
+    await textField7.setValue("\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u51068 \u51221  \u51228 \u47785 "); */\
+\
+    // \uc0\u51068 \u51221  \u51200 \u51109 \
+    await clickElement(driver, '//*[@text="\uc0\u51200 \u51109 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u51068 \u51221  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[7]');\
+\
+    // \uc0\u54624  \u51068  \u46321 \u47197 \u54616 \u44592 \
+    await clickElement(driver, '//*[@text="\uc0\u54624  \u51068  \u46321 \u47197 "]');\
+\
+    // \uc0\u51068 \u51221  \u51228 \u47785  \u53581 \u49828 \u53944  \u54596 \u46300  \u49440 \u53469  \u54980  \u53581 \u49828 \u53944  \u51077 \u47141 \
+    await setValue(driver, '//android.widget.EditText[@resource-id="com.kakao.talk.jordy:id/content_edit"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u54624  \u51068  \u51228 \u47785 ");\
+    /* const textField8 = await driver.$('//android.widget.EditText[@resource-id="com.kakao.talk.jordy:id/content_edit"]');\
+    await textField8.setValue("\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u54624  \u51068  \u51228 \u47785 "); */\
+\
+    // \uc0\u51068 \u51221  \u51200 \u51109 \
+    await clickElement(driver, '//*[@text="\uc0\u51200 \u51109 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u51648 \u46020  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[8]');\
+\
+    // \uc0\u44428 \u54620  \u54045 \u50629 \u51060  \u46896 \u44221 \u50864  \u54728 \u50857 \u51012  \u49440 \u53469  \u44428 \u54620  \u54045 \u50629 \u51060  \u48156 \u49373 \u54616 \u51648  \u50506 \u51012  \u49884  \u51648 \u46020  \u49440 \u53469 \u51004 \u47196  \u45796 \u51020  \u49828 \u53485  \u49884 \u51089 \
+    try \{\
+      // \uc0\u54728 \u50857 \u51060 \u46972 \u45716  \u53581 \u49828 \u53944 \u44032  \u51080 \u51004 \u47732  \u53364 \u47533 \
+      await clickElement(driver, '//*[@text="\uc0\u54728 \u50857 "]');\
+    \} catch (error) \{ \}\
+\
+    // \uc0\u51648 \u46020  \u51204 \u49569 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.LinearLayout[@resource-id="com.kakao.talk:id/box_wrap"]');\
+\
+    // +\uc0\u47700 \u45684  \u45796 \u51020 \u51004 \u47196  \u51060 \u46041 \
+    await clickElement(driver, '//android.widget.ImageView[@content-desc="\uc0\u45796 \u51020 "]');\
+\
+    // \uc0\u52897 \u52376  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[1]');\
+\
+    // \uc0\u52897 \u52376  \u50689 \u50669  \u51648 \u51221 \
+    await clickElement(driver, '//android.widget.LinearLayout[@resource-id="com.kakao.talk:id/container"]/android.widget.LinearLayout');\
+    await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/address"]');\
+\
+    // \uc0\u51200 \u51109 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageButton[@content-desc="\uc0\u51200 \u51109 \u54616 \u44592 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u52897 \u52376  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[1]');\
+\
+    // \uc0\u52897 \u52376  \u50689 \u50669  \u51648 \u51221 \
+    await clickElement(driver, '//android.widget.LinearLayout[@resource-id="com.kakao.talk:id/container"]/android.widget.LinearLayout');\
+    await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/address"]');\
+\
+    // \uc0\u44277 \u50976 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageButton[@content-desc="\uc0\u44277 \u50976 \u54616 \u44592 "]');\
+    await clickElement(driver, '(//android.view.View[@resource-id="com.kakao.talk:id/profile"])[1]');\
+    await setValue(driver, '//android.widget.EditText[@resource-id="com.kakao.talk:id/edit_text"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u52897 \u52376  \u44277 \u50976 ");\
+\
+    /* const textField9 = await driver.$('//android.widget.EditText[@resource-id="com.kakao.talk:id/edit_text"]');\
+    await textField9.setValue("\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u52897 \u52376  \u44277 \u50976 "); */\
+    await clickElement(driver, '//*[@text="\uc0\u48372 \u45236 \u44592 "]');\
+\
+    //10\uc0\u52488  \u45824 \u44592 \u54980  \u49884 \u51089 \
+    await driver.pause(10000);\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u51020 \u49457 \u47700 \u49884 \u51648  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[2]');\
+\
+    // \uc0\u51020 \u49457 \u47700 \u49884 \u51648  \u49440 \u53469  \u54980  \u44428 \u54620  \u54045 \u50629  \u45432 \u52636 \u46104 \u47732  \u54728 \u50857  \u49440 \u53469  \u54980  \u49884 \u51089  \u45432 \u52636 \u46104 \u51648  \u50506 \u51012  \u44221 \u50864  \u45796 \u51020  \u49828 \u53485  \u49884 \u51089 \
+    try \{\
+      // \uc0\u54728 \u50857 \u51060 \u46972 \u45716  \u53581 \u49828 \u53944 \u44032  \u51080 \u51004 \u47732  \u53364 \u47533 \
+      await clickElement(driver, '//*[@text="\uc0\u54728 \u50857 "]');\
+    \} catch (error) \{ \}\
+\
+    // \uc0\u44036 \u54200  \u45433 \u51020  \u48260 \u53948  \u49324 \u50857  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.CheckBox[@resource-id="com.kakao.talk:id/check_box"]');\
+\
+    // \uc0\u51020 \u49457 \u47700 \u49884 \u51648  \u45433 \u51020  \u49884 \u51089 \
+    await clickElement(driver, '//android.widget.ImageButton[@content-desc="\uc0\u45433 \u51020  \u49884 \u51089 "]');\
+\
+    //10\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(10000);\
+\
+    // \uc0\u51204 \u49569 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u51204 \u49569 "]');\
+\
+    // \uc0\u44036 \u54200  \u45433 \u51020  \u48260 \u53948  \u49440 \u53469  \u54616 \u50668  \u51204 \u49569 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/optional_send"]');\
+    await clickElement(driver, '//android.widget.ImageButton[@resource-id="com.kakao.talk:id/record"]');\
+    await driver.pause(10000);\
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u51204 \u49569 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u52852 \u52852 \u50724  \u54532 \u47196 \u54596  \u45800 \u51068  \u51204 \u49569 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[3]');\
+    await clickElement(driver, '//*[@text="\uc0\u52852 \u52852 \u50724 \u53665  \u54532 \u47196 \u54596  \u48372 \u45236 \u44592 "]');\
+    await clickElement(driver, '(//android.widget.RelativeLayout[@resource-id="com.kakao.talk:id/deactive_background"])[1]/android.view.ViewGroup');\
+    await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+\
+    // \uc0\u52852 \u52852 \u50724  \u54532 \u47196 \u54596  2\u44060  \u51060 \u49345  \u51204 \u49569 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[3]');\
+    await clickElement(driver, '//*[@text="\uc0\u52852 \u52852 \u50724 \u53665  \u54532 \u47196 \u54596  \u48372 \u45236 \u44592 "]');\
+    await clickElement(driver, '(//android.widget.RelativeLayout[@resource-id="com.kakao.talk:id/deactive_background"])[1]/android.view.ViewGroup');\
+    await clickElement(driver, '(//android.widget.RelativeLayout[@resource-id="com.kakao.talk:id/deactive_background"])[2]/android.view.ViewGroup');\
+    await clickElement(driver, '(//android.widget.RelativeLayout[@resource-id="com.kakao.talk:id/deactive_background"])[3]/android.view.ViewGroup');\
+    await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+\
+    // \uc0\u50672 \u46973 \u52376  \u45800 \u51068  \u51204 \u49569 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[3]');\
+    await clickElement(driver, '//*[@text="\uc0\u50672 \u46973 \u52376  \u48372 \u45236 \u44592 "]');\
+    await clickElement(driver, '//*[@text="\uc0\u12593 .\u47560 \u44536  \u51088 \u46041 \u54868  \u50672 \u46973 \u52376 "]');\
+    await clickElement(driver, '//*[@text="\uc0\u51204 \u49569 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u54028 \u51068  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[4]');\
+\
+    // \uc0\u54028 \u51068 \u50640 \u49436  \u49440 \u53469  \u54980  \u54637 \u47785  1 \u51204 \u49569 \
+    await clickElement(driver, '//*[@text="\uc0\u54028 \u51068 \u50640 \u49436  \u49440 \u53469 "]');\
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.android.documentsui:id/icon_thumb"])[1]');\
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[4]');\
+\
+    // \uc0\u50536 \u48276 \u50640 \u49436  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//*[@text="\uc0\u50536 \u48276 \u50640 \u49436  \u49440 \u53469 "]');\
+\
+    // 5\uc0\u52488 \u45824 \u44592 \
+    await driver.pause(5000);\
+\
+    // \uc0\u50536 \u48276  \u51652 \u51077  \u54980  \u53945 \u51221 \u51340 \u54364  \u53485  \u54980  \u49828 \u50752 \u51060 \u54532 \u47196  \u49324 \u51652 \u51204 \u49569 \
+    try \{\
+      // \uc0\u47217 \u54532 \u47112 \u49828 \u54624  \u50836 \u49548 \u51032  XPath\
+      const elementXPath = '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/thumbnail"])[2]';\
+\
+      // \uc0\u47217 \u54532 \u47112 \u49828  (Long Press) \u48143  \u50500 \u47000 \u47196  \u49828 \u50752 \u51060 \u54532  (Swipe)\
+      await driver.touchAction([\
+        \{ action: 'press', element: await driver.$(elementXPath) \},\
+        \{ action: 'moveTo', x: 534, y: 1896 \},  // \uc0\u49828 \u50752 \u51060 \u54532  \u44144 \u47532  \u48143  \u48169 \u54693  \u51312 \u51208 \
+        \{ action: 'release' \},\
+      ]);\
+\
+      await clickElement(driver, '//*[@text="\uc0\u51204 \u49569 "]');\
+\
+      // 20\uc0\u52488  \u45824 \u44592 \
+      await driver.pause(20000);\
+    \} catch (error) \{\
+      console.error('Error:', error);\
+    \}\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u54028 \u51068  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[4]');\
+\
+    // 5\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(5000);\
+\
+    // \uc0\u52572 \u44540  \u48372 \u45240  \u54028 \u51068  \u54637 \u47785  \u51204 \u49569 \
+    await clickElement(driver, '//androidx.compose.ui.platform.ComposeView/android.view.View/android.view.View[4]/android.view.View[1]/android.widget.Button');\
+\
+    // 5\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(5000);\
+\
+    // \uc0\u52572 \u44540 \u50640  \u48372 \u45240  \u54028 \u51068  \u51204 \u52404  \u49325 \u51228 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[4]');\
+\
+    //10\uc0\u52488  \u45824 \u44592  -> \u54028 \u51068  \u45936 \u51060 \u53552 \u50577 \u51060  \u47566 \u51012  \u46412  \u46364 \u47112 \u51060 \u44032  \u51080 \u45716 \u44152  \u54869 \u51064 \u54616 \u50668  \u44060 \u49440 \
+    await driver.pause(5000);\
+    await clickElement(driver, '//*[@text="\uc0\u51204 \u52404 \u49325 \u51228 "]');\
+    await clickElement(driver, '//*[@text="\uc0\u49325 \u51228 "]');\
+\
+    // \uc0\u48624  \u50500 \u50883 \
+    /* await driver.touchAction([\
+      \{ action: 'tap', x: 100, y: 100 \} ]); */\
+\
+    // \uc0\u50504 \u46300 \u47196 \u51060 \u46300  \u44592 \u44592  \u48177 \u53412 \u47196  \u48624  \u50500 \u50883 \
+    await driver.pressKeyCode(4);\
+\
+    // 5\uc0\u52488  \u45824 \u44592  \
+    await driver.pause(5000);\
+\
+    //\uc0\u48036 \u51649  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[5]');\
+    await driver.pause(10000);\
+    await setValue(driver, '//android.widget.EditText[@resource-id="search__word"]', "Hype boy");\
+    /* const textField13 = await driver.$('//android.widget.EditText[@resource-id="search__word"]');\
+    await textField13.setValue("Hype boy") ; */\
+    await clickElement(driver, '//android.widget.Button[@text="\uc0\u52286 \u44592 "]');\
+\
+    // \uc0\u48036 \u51649  \u45800 \u51068  \u51204 \u49569  \
+    await clickElement(driver, '//android.widget.ListView[@resource-id="commonList"]/android.view.View[1]/android.view.View[2]/android.view.View[1]');\
+    await clickElement(driver, '//android.widget.TextView[@text="\uc0\u48372 \u45236 \u44592 1"]');\
+\
+    // 5\uc0\u52488  \u45824 \u44592  \
+    await driver.pause(5000);\
+\
+    // #\uc0\u48260 \u53948  \u51228 \u48708 \u48977 \u44592  \u51204 \u49569 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search_sharp_button"]');\
+    await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/keyword" and @text="\uc0\u51228 \u48708 \u48977 \u44592 "]');\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.jordy:id/share"]');\
+\
+    // #\uc0\u48260 \u53948  \u51228 \u48708 \u48977 \u44592  \u51204 \u49569 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search_sharp_button"]');\
+    await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/keyword" and @text="\uc0\u45216 \u50472 "]');\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.jordy:id/share"]');\
+\
+    // #\uc0\u48260 \u53948  \u51228 \u48708 \u48977 \u44592  \u51204 \u49569 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search_sharp_button"]')\
+    await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/keyword" and @text="D-DAY"]');\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.jordy:id/share"]');\
+\
+    // #\uc0\u48260 \u53948  \u53581 \u49828 \u53944  \u51649 \u51217  \u51077 \u47141  \u51204 \u49569 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search_sharp_button"]')\
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@content-desc="\uc0\u49397 \u44160 \u49353 , \u53581 \u49828 \u53944  \u54596 \u46300 "]', `\u52852 \u52852 \u50724 `);\
+    /*\
+    const textField12 = await driver.$('//android.widget.MultiAutoCompleteTextView[@content-desc="\uc0\u49397 \u44160 \u49353 , \u53581 \u49828 \u53944  \u54596 \u46300 "]'); // XPath \u44050 \u51004 \u47196  \u49892 \u51228  \u54868 \u47732 \u50640  \u45824 \u54620  \u51221 \u48372 \u47196  \u49688 \u51221 \
+    await textField12.setValue(`\uc0\u52852 \u52852 \u50724 `); // \u51077 \u47141 \u54624  \u53581 \u49828 \u53944  \u45236 \u50857 \u51004 \u47196  \u49688 \u51221  */\
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search"]');\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.jordy:id/share"]');\
+\
+    // \uc0\u49324 \u51060 \u46300  \u47700 \u45684  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u47700 \u45684  \u45908 \u48372 \u44592 "]');\
+\
+    // \uc0\u53665  \u44172 \u49884 \u54032  \u49440 \u53469  \
+    await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/title_text" and @text="\uc0\u53665 \u44172 \u49884 \u54032 "]');\
+\
+    // \uc0\u44544 \u50416 \u44592  \u48260 \u53948  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u44544 \u50416 \u44592 "]');\
+\
+    // \uc0\u44544 \u50416 \u44592 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk.moim:id/content_edit"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u51204 \u52404  \u44277 \u51648  \u51077 \u47141 ");\
+\
+    // \uc0\u50756 \u47308  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@text="\uc0\u50756 \u47308 "]');\
+\
+    // \uc0\u44277 \u51648  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.LinearLayout[@content-desc="\uc0\u44277 \u51648 "]');\
+\
+    // \uc0\u44544 \u50416 \u44592  \u48260 \u53948  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u44544 \u50416 \u44592 "]');\
+\
+    // \uc0\u44544 \u50416 \u44592 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk.moim:id/content_edit"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u44277 \u51648  \u51077 \u47141 ");\
+\
+    // \uc0\u50756 \u47308  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@text="\uc0\u50756 \u47308 "]');\
+\
+    // \uc0\u49324 \u51652  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.TextView[@resource-id="android:id/text1" and @text="\uc0\u49324 \u51652 "]');\
+\
+    // \uc0\u49324 \u51652  \u50732 \u47532 \u44592 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u44544 \u50416 \u44592 "]');\
+\
+    // \uc0\u44544 \u50416 \u44592 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk.moim:id/content_edit"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u49324 \u51652  \u50732 \u47532 \u44592  \u53580 \u49828 \u53944 ");\
+\
+    // \uc0\u49324 \u51652  \u49440 \u53469 \
+    // await clickElement(driver, '/android.widget.ImageView[@content-desc="\uc0\u49324 \u51652 "]');\
+    await tapElement(driver, '\uc0\u49324 \u51652 ');\
+    try \{\
+      // "\uc0\u45796 \u49884  \u48372 \u51648  \u50506 \u51020 " \u53581 \u49828 \u53944 \u44032  \u51080 \u51004 \u47732  \u53364 \u47533 \
+      await clickElement(driver, '//*[@text="\uc0\u45796 \u49884 \u48372 \u51648 \u50506 \u51020 "]');\
+    \} catch (error) \{ \}\
+\
+    try \{\
+      // \uc0\u47217 \u54532 \u47112 \u49828 \u54624  \u50836 \u49548 \u51032  XPath\
+      const elementXPath = '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/thumbnail_preview"])[1]';\
+\
+      // \uc0\u47217 \u54532 \u47112 \u49828  (Long Press) \u48143  \u50500 \u47000 \u47196  \u49828 \u50752 \u51060 \u54532  (Swipe)\
+      await driver.touchAction([\
+        \{ action: 'press', element: await driver.$(elementXPath) \},\
+        \{ action: 'moveTo', x: 545, y: 1888 \},  // \uc0\u49828 \u50752 \u51060 \u54532  \u44144 \u47532  \u48143  \u48169 \u54693  \u51312 \u51208 \
+        \{ action: 'release' \},\
+      ]);\
+\
+      await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+\
+      // 5\uc0\u52488  \u45824 \u44592 \
+      await driver.pause(5000);\
+    \} catch (error) \{\
+      console.error('Error:', error);\
+    \}\
+\
+    // \uc0\u54869 \u51064  \u49440 \u53469 \
+    // await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+\
+    // \uc0\u50756 \u47308  \u49440 \u53469 \
+    await clickElement(driver, '//*[@text="\uc0\u50756 \u47308 "]');\
+\
+    // \uc0\u49324 \u51652  \u50629 \u47196 \u46300  \u49884 \u44036  \u46364 \u47112 \u51060 \
+    await driver.pause(20000);\
+\
+    // \uc0\u46041 \u50689 \u49345  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.TextView[@resource-id="android:id/text1" and @text="\uc0\u46041 \u50689 \u49345 "]');\
+\
+    // \uc0\u46041 \u50689 \u49345  \u50732 \u47532 \u44592  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u44544 \u50416 \u44592 "]');\
+\
+    // \uc0\u44544 \u50416 \u44592 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk.moim:id/content_edit"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u46041 \u50689 \u49345  \u50732 \u47532 \u44592  \u53580 \u49828 \u53944 ");\
+\
+    // \uc0\u46041 \u50689 \u49345  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.ImageView[@content-desc="\uc0\u46041 \u50689 \u49345 "]');\
+\
+    // \uc0\u52395 \u48264 \u51704  \u46041 \u50689 \u49345  \u49440 \u53469 \
+    await clickElement(driver, '//android.view.View[@resource-id="com.sec.android.gallery3d:id/gl_root_view"]/com.sec.samsung.gallery.glview.composeView.ThumbObject[1]');\
+\
+    // \uc0\u54869 \u51064  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@text="\uc0\u54869 \u51064 "]');\
+\
+    // \uc0\u50756 \u47308  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@text="\uc0\u50756 \u47308 "]');\
+\
+    // \uc0\u50629 \u47196 \u46300  \u46364 \u47112 \u51060 \u44050  20\u52488 \
+    await driver.pause(20000);\
+\
+    // \uc0\u54028 \u51068  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.TextView[@resource-id="android:id/text1" and @text="\uc0\u54028 \u51068 "]');\
+\
+    // \uc0\u54028 \u51068  \u50732 \u47532 \u44592  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u44544 \u50416 \u44592 "]');\
+\
+    // \uc0\u44544 \u50416 \u44592 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk.moim:id/content_edit"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u54028 \u51068  \u50732 \u47532 \u44592  \u53580 \u49828 \u53944 ");\
+\
+    // \uc0\u54028 \u51068  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.ImageView[@content-desc="\uc0\u54028 \u51068 "]');\
+\
+    // \uc0\u52395 \u48264 \u51704  \u54028 \u51068  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.android.documentsui:id/icon_thumb"])[1]');\
+\
+    // \uc0\u50676 \u44592  \u53364 \u47533 \
+    // await clickElement(driver, '//android.widget.Button[@resource-id="com.android.documentsui:id/menu_open"]');\
+\
+    // \uc0\u50756 \u47308  \u53364 \u47533 \
+    await clickElement(driver, '//android.widget.Button[@text="\uc0\u50756 \u47308 "]');\
+\
+    // \uc0\u54028 \u51068  \u50629 \u47196 \u46300  20\u52488  \u45824 \u44592 \
+    await driver.pause(20000);\
+\
+    // \uc0\u53804 \u54364  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.TextView[@resource-id="android:id/text1" and @text="\uc0\u53804 \u54364 "]');\
+\
+    // \uc0\u53804 \u54364  \u44544 \u50416 \u44592  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u44544 \u50416 \u44592 "]');\
+\
+    // \uc0\u53804 \u54364  \u51228 \u47785  \u51077 \u47141 \
+    await setValue(driver, '//android.widget.EditText[@resource-id="com.kakao.talk.moim:id/poll_subject_edit"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u53804 \u54364  \u53580 \u49828 \u53944 ");\
+\
+    // \uc0\u53804 \u54364  \u54637 \u47785  1 \u51077 \u47141 \
+    await clickElement(driver, '(//android.widget.EditText[@resource-id="com.kakao.talk.moim:id/poll_item_title_edit"])[1]');\
+    await setValue(driver, '(//android.widget.EditText[@resource-id="com.kakao.talk.moim:id/poll_item_title_edit"])[1]', "\uc0\u53580 \u49828 \u53944  1\u54637 \u47785 ");\
+\
+    // \uc0\u53804 \u54364  \u54637 \u47785  2 \u51077 \u47141 \
+    await clickElement(driver, '(//android.widget.EditText[@resource-id="com.kakao.talk.moim:id/poll_item_title_edit"])[2] ');\
+    await setValue(driver, '(//android.widget.EditText[@resource-id="com.kakao.talk.moim:id/poll_item_title_edit"])[2]', "\uc0\u53580 \u49828 \u53944  2\u54637 \u47785 ");\
+\
+    // \uc0\u53804 \u54364  \u54637 \u47785  3 \u51077 \u47141 \
+    await clickElement(driver, '(//android.widget.EditText[@resource-id="com.kakao.talk.moim:id/poll_item_title_edit"])[3]');\
+    await setValue(driver, '(//android.widget.EditText[@resource-id="com.kakao.talk.moim:id/poll_item_title_edit"])[3]', "\uc0\u53580 \u49828 \u53944  3\u54637 \u47785 ");\
+\
+    // \uc0\u50756 \u47308  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@text="\uc0\u50756 \u47308 "]');\
+\
+    // 3\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(3000);\
+\
+    // \uc0\u48177 \u53412 \u47196  \u44172 \u49884 \u54032 \u50640 \u49436  \u45208 \u44032 \u44592 \
+    await driver.pressKeyCode(4);\
+\
+    // 5\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(5000);\
+\
+    // \uc0\u48177 \u53412 \u47196  \u52292 \u54021 \u47785 \u47197 \u51004 \u47196  \u51060 \u46041 \
+    await driver.pressKeyCode(4);\
+\
+    // + \uc0\u50500 \u51060 \u53080 \u51012  \u52286 \u50500 \u49436  \u53364 \u47533  (XPath \u44050 \u51004 \u47196  \u49688 \u51221 )\
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u45824 \u54868  \u49884 \u51089 \u54616 \u44592 "]');\
+\
+    // \uc0\u51068 \u48152  \u52292 \u54021  \u53581 \u49828 \u53944 \u47484  \u52286 \u50500 \u49436  \u53364 \u47533  (XPath \u44050 \u51004 \u47196  \u49688 \u51221 )\
+    await clickElement(driver, '//android.widget.TextView[@text="\uc0\u51068 \u48152 \u52292 \u54021 "]');\
+\
+    // \uc0\u52395  \u48264 \u51704  \u50976 \u51200  \u53364 \u47533  (XPath \u44050 \u51004 \u47196  \u49688 \u51221 )\
+    await clickElement(driver, '(//android.widget.RelativeLayout[@resource-id="com.kakao.talk:id/deactive_background"])[1]/android.view.ViewGroup');\
+\
+    // \uc0\u46160  \u48264 \u51704  \u50976 \u51200  \u53364 \u47533  (XPath \u44050 \u51004 \u47196  \u49688 \u51221 )\
+    await clickElement(driver, '(//android.widget.RelativeLayout[@resource-id="com.kakao.talk:id/deactive_background"])[2]/android.view.ViewGroup');\
+\
+    // \uc0\u50976 \u51200  \u49440 \u53469  \u54980  \u45796 \u51020  \u48260 \u53948  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//*[@text="\uc0\u45796 \u51020 "]');\
+\
+    // \uc0\u44536 \u47353 \u52292 \u54021 \u48169  \u51221 \u48372  \u49444 \u51221  \u54869 \u51064  \u53581 \u49828 \u53944  \u52286 \u50500 \u49436  \u49440 \u53469 \
+    await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+\
+    for (let i = 1; i <= 2; i++) \{\
+      // \uc0\u53581 \u49828 \u53944  \u54596 \u46300 \u47484  \u52286 \u50500 \u49436  n\u54924  \u51077 \u47141 \
+      await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u53580 \u49828 \u53944  \u53581 \u49828 \u53944  $\{i\}\u54924  \u51204 \u49569 `);\
+\
+      // \uc0\u51204 \u49569  \u48260 \u53948  \u53364 \u47533 \u54616 \u44592 \
+      await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');\
+    \}\
+\
+    // \uc0\u47700 \u49884 \u51648  \u47217 \u54532 \u47112 \u49828  \u46041 \u51089 \u54616 \u44592  or \u47784 \u46304  \u45824 \u54868 \u48169 \u50640 \u49436  \u47700 \u49884 \u51648  \u49325 \u51228 \
+    for (let i = 1; i <= 2; i++) \{\
+      touchAction(driver, `//android.widget.TextView[@resource-id="com.kakao.talk:id/message" and @text="\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u53580 \u49828 \u53944  \u53581 \u49828 \u53944  $\{i\}\u54924  \u51204 \u49569 "]`, 'longPress');\
+      await clickElement(driver, '//*[@text="\uc0\u49325 \u51228 "]');\
+      if (i === 1) \{\
+        await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+        await clickElement(driver, '//*[@text="\uc0\u49325 \u51228 "]');\
+      \} else \{\
+        await clickElement(driver, '//*[@text="\uc0\u51060  \u44592 \u44592 \u50640 \u49436  \u49325 \u51228 "]');\
+        await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+        await clickElement(driver, '//*[@text="\uc0\u49325 \u51228 \u54616 \u44592 "]');\
+        await clickElement(driver, '//*[@text="\uc0\u49325 \u51228 "]');\
+      \}\
+    \}\
+\
+    // \uc0\u47553 \u53356  \u51204 \u49569 \u54616 \u44592 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `naver.com`);\
+\
+    // \uc0\u51204 \u49569  \u48260 \u53948  \u53364 \u47533 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');\
+\
+    // \uc0\u54616 \u51060 \u54140 \u47553 \u53356  \u47568 \u54413 \u49440  \u51204 \u49569 \u54616 \u44592 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `\uc0\u48372 \u51060 \u49828 \u53665 , \u54168 \u51060 \u49828 \u53665 , 110-1234-1234, 010-9965-4736`);\
+\
+    // \uc0\u51204 \u49569  \u48260 \u53948  \u53364 \u47533 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');\
+\
+    // \uc0\u53581 \u49828 \u53944 \u47564  500\u51088  \u51204 \u49569 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 \
+    500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 \
+    500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 \
+    500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 \
+    500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 `);\
+\
+    // \uc0\u51204 \u49569  \u48260 \u53948  \u53364 \u47533 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');\
+\
+    // \uc0\u51060 \u47784 \u54000 \u53080  \u53485  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/emoticon_button"]')\
+\
+    // \uc0\u51060 \u47784 \u54000 \u53080  \u45908 \u48660 \u53485 \u54616 \u50668  \u51204 \u49569 \
+    for (let i = 1; i <= 4; i++) \{\
+      await touchAction(driver, `(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[$\{i\}]`, [\
+        \{ action: 'tap', x: 0, y: 0 \},\
+        \{ action: 'tap', x: 0, y: 0 \}\
+      ]);\
+    \}\
+\
+    // \uc0\u53581 \u49828 \u53944  \u51077 \u47141 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `\uc0\u51060 \u47784 \u54000 \u53080 \u44284  \u54632 \u44760  \u51204 \u49569 `);\
+\
+    // \uc0\u51060 \u47784 \u54000 \u53080  \u53485  \u49440 \u53485  \u54980  \u45908 \u48660 \u53485 \u51004 \u47196  \u51060 \u47784 \u54000 \u53080  \u51204 \u49569 \
+    await touchAction(driver, `(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[1]`, [\
+      \{ action: 'tap', x: 0, y: 0 \},\
+      \{ action: 'tap', x: 0, y: 0 \}\
+    ]);\
+\
+    // \uc0\u44592 \u48376  \u51060 \u47784 \u54000 \u53080  \u51204 \u49569 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `(\uc0\u54616 \u54616 ), (\u54616 \u53944 \u49093 ), (\u50864 \u50752 ), (\u49900 \u44033 )`);\
+\
+    // \uc0\u51204 \u49569  \u48260 \u53948  \u53364 \u47533 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');\
+\
+    // \uc0\u44592 \u48376  \u51060 \u47784 \u54000 \u53080  + \u53581 \u49828 \u53944  \u51077 \u47141  \u51204 \u49569 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `(\uc0\u54616 \u54616 ), (\u54616 \u53944 \u49093 ), (\u50864 \u50752 ), (\u49900 \u44033 ) + \u44592 \u48376 \u51060 \u47784 \u54000 \u53080 \u44284  \u53581 \u49828 \u53944  \u44057 \u51060  \u51204 \u49569 `);\
+\
+    // \uc0\u51204 \u49569  \u48260 \u53948  \u53364 \u47533 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');\
+\
+    /* ------------\uc0\u53581 \u49828 \u53944  500\u51088  \u51077 \u47141  \u54980  \u51060 \u47784 \u54000 \u53080  \u51652 \u51077  \u49884  \u50620 \u47103  \u45432 \u52636  \u54869 \u51064  \u50668 \u48512 \u50640  \u45824 \u54620  \u44396 \u54788  \u50668 \u48512 \u44032  \u44032 \u45733 \u54620 \u51648  \u49373 \u44033 \u51473 ..... */\
+\
+\
+    /*------------------------------------------------------------------------------------------ */\
+    // +\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u50536 \u48276  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[1]');\
+\
+    // 5\uc0\u52488  \u45824 \u44592  \
+    await driver.pause(5000);\
+\
+    // \uc0\u51204 \u52404  \u49440 \u53469 \
+    // await clickElement(driver, '//*[@text="\uc0\u51204 \u52404 "]');\
+    // x : 88 y : 2006\
+    try \{\
+      // \uc0\u53945 \u51221  \u51340 \u54364  \u53485  (Tap)\
+      await driver.touchAction([\
+        \{ action: 'tap', x: tapX, y: tapY \},\
+      ]);\
+\
+      // 5\uc0\u52488  \u45824 \u44592  \
+      await driver.pause(5000);\
+\
+      // \uc0\u47217 \u54532 \u47112 \u49828 \u54624  \u50836 \u49548 \u51032  XPath\
+      const elementXPath = '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/thumbnail"])[2]';\
+\
+      // \uc0\u47217 \u54532 \u47112 \u49828  (Long Press) \u48143  \u50500 \u47000 \u47196  \u49828 \u50752 \u51060 \u54532  (Swipe)\
+      await driver.touchAction([\
+        \{ action: 'press', element: await driver.$(elementXPath) \},\
+        \{ action: 'moveTo', x: 534, y: 1896 \},  // \uc0\u49828 \u50752 \u51060 \u54532  \u44144 \u47532  \u48143  \u48169 \u54693  \u51312 \u51208 \
+        \{ action: 'release' \},\
+      ]);\
+\
+      await clickElement(driver, '//*[@text="\uc0\u51204 \u49569 "]');\
+\
+      // 20\uc0\u52488  \u45824 \u44592 \
+      await driver.pause(20000);\
+    \} catch (error) \{\
+      console.error('Error:', error);\
+    \}\
+\
+    try \{\
+      // +\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+      await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+      // \uc0\u50536 \u48276  \u49440 \u53469 \u54616 \u44592 \
+      await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[1]');\
+\
+      // 5\uc0\u52488  \u45824 \u44592  \
+      await driver.pause(5000);\
+\
+      // \uc0\u51648 \u51221 \u54620 \u44275  \u53485 \
+      await driver.touchAction([\
+        \{ action: 'tap', x: tapX, y: tapY \},\
+      ]);\
+\
+      try \{\
+        // \uc0\u54728 \u50857 \u51060 \u46972 \u45716  \u53581 \u49828 \u53944 \u44032  \u51080 \u51004 \u47732  \u53364 \u47533  \u54980  \u49324 \u51652 \u52524 \u50689  \u49884 \u51089 \
+        await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+      \} catch (error) \{ \}\
+\
+      // \uc0\u49324 \u51652  \u47926 \u50612 \u49436  \u48372 \u45236 \u44592  \u49440 \u53469 \
+      await clickElement(driver, '//*[@text="\uc0\u49324 \u51652  \u47926 \u50612 \u48372 \u45236 \u44592 "]');\
+\
+      // \uc0\u47217 \u54532 \u47112 \u49828 \u54624  \u50836 \u49548 \u51032  XPath\
+      const elementXPath2 = '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/thumbnail"])[2]';\
+\
+      // 5\uc0\u52488  \u45824 \u44592  \
+      await driver.pause(5000);\
+\
+      // \uc0\u47217 \u54532 \u47112 \u49828  (Long Press) \u48143  \u50500 \u47000 \u47196  \u49828 \u50752 \u51060 \u54532  (Swipe)\
+      await driver.touchAction([\
+        \{ action: 'press', element: await driver.$(elementXPath2) \},\
+        \{ action: 'moveTo', x: 534, y: 1896 \},  // \uc0\u49828 \u50752 \u51060 \u54532  \u44144 \u47532  \u48143  \u48169 \u54693  \u51312 \u51208 \
+        \{ action: 'release' \},\
+      ]);\
+\
+      // \uc0\u51204 \u49569  \u49440 \u53469 \
+      await clickElement(driver, '//*[@text="\uc0\u51204 \u49569 "]');\
+\
+      // 20\uc0\u52488  \u45824 \u44592 \
+      await driver.pause(20000);\
+    \} catch (error) \{ \}\
+\
+    // +\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u52852 \u47700 \u46972  \u54637 \u47785  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[2]');\
+\
+    // \uc0\u49324 \u51652 \u52524 \u50689 \u51004 \u47196  \u51060 \u46041 \
+    await clickElement(driver, '//*[@text="\uc0\u49324 \u51652  \u52524 \u50689 "]');\
+\
+    // \uc0\u49324 \u51652  \u52524 \u50689  \u49884 \u51089 \
+    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="\uc0\u49492 \u53552 "]')\
+\
+    // 3\uc0\u52488  \u45824 \u44592  \u54980  \u51204 \u49569 \
+    await driver.pause(3000);\
+\
+    // \uc0\u49324 \u51652  \u52524 \u50689  \u54869 \u51064  \u54980  \u51204 \u49569 \
+    await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+\
+    // 3\uc0\u52488  \u45824 \u44592  \u54980  \u51204 \u49569 \
+    await driver.pause(3000);\
+    await clickElement(driver, '//*[@text="\uc0\u51204 \u49569 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u52852 \u47700 \u46972  \u54637 \u47785  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[2]');\
+\
+    // \uc0\u46041 \u50689 \u49345  \u52524 \u50689 \u51004 \u47196  \u51060 \u46041 \
+    await clickElement(driver, '//*[@text="\uc0\u46041 \u50689 \u49345  \u52524 \u50689 "]');\
+\
+    // \uc0\u46041 \u50689 \u49345  \u52524 \u50689  \u49884 \u51089  \u48143  \u51333 \u47308 \
+    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="\uc0\u45433 \u54868 "]');\
+\
+    // 10\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(10000);\
+    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="\uc0\u51473 \u51648 "]');\
+\
+    // \uc0\u46041 \u50689 \u49345  \u54869 \u51064  \u54980  \u51204 \u49569 \
+    await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+    await clickElement(driver, '//*[@text="\uc0\u51204 \u49569 "]');\
+\
+    // 10\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(10000);\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u53685 \u54868 \u54616 \u44592  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[4]');\
+\
+    // \uc0\u48372 \u51060 \u49828 \u53665  \u49440 \u52293 \
+    await clickElement(driver, '//*[@text="\uc0\u48372 \u51060 \u49828 \u53665 "]');\
+\
+    // 10\uc0\u52488  \u45824 \u44592     \
+    await driver.pause(10000);\
+\
+    // \uc0\u48372 \u51060 \u49828 \u53665  \u51333 \u47308 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u53685 \u54868  \u51333 \u47308 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u53685 \u54868 \u54616 \u44592  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[4]');\
+\
+    // \uc0\u54168 \u51060 \u49828 \u53665  \u49440 \u53469 \
+    await clickElement(driver, '//*[@text="\uc0\u54168 \u51060 \u49828 \u53665 "]');\
+\
+    // 10\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(10000);\
+\
+    // \uc0\u54168 \u51060 \u49828 \u53665  \u51333 \u47308 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u53685 \u54868  \u51333 \u47308 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u50696 \u50557 \u47700 \u49884 \u51648  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[6]');\
+\
+    // \uc0\u50696 \u50557 \u47700 \u49884 \u51648  \u53581 \u49828 \u53944  \u54596 \u46300  \u49440 \u53469  \u54980  \u53581 \u49828 \u53944  \u51077 \u47141  \u54980  \u50696 \u50557 \
+    await setValue(driver, '//android.widget.EditText[@resource-id="com.kakao.talk.jordy:id/text_content"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u53580 \u49828 \u53944  \u50696 \u50557 \u47700 \u49884 \u51648 ");\
+    await clickElement(driver, '//*[@text="\uc0\u50696 \u50557 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u51068 \u51221  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[7]');\
+\
+    // \uc0\u51068 \u51221  \u46321 \u47197 \u54616 \u44592 \
+    await clickElement(driver, '//*[@text="\uc0\u51068 \u51221  \u46321 \u47197 "]');\
+\
+    // \uc0\u51068 \u51221  \u51228 \u47785  \u53581 \u49828 \u53944  \u54596 \u46300  \u49440 \u53469  \u54980  \u53581 \u49828 \u53944  \u51077 \u47141 \
+    await setValue(driver, '//android.widget.EditText[@resource-id="com.kakao.talk.calendar:id/event_title"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u51068 \u51221  \u51228 \u47785 ");\
+\
+    // \uc0\u51068 \u51221  \u51200 \u51109 \
+    await clickElement(driver, '//*[@text="\uc0\u51200 \u51109 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u51068 \u51221  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[7]');\
+\
+    // \uc0\u54624  \u51068  \u46321 \u47197 \u54616 \u44592 \
+    await clickElement(driver, '//*[@text="\uc0\u54624  \u51068  \u46321 \u47197 "]');\
+\
+    // \uc0\u51068 \u51221  \u51228 \u47785  \u53581 \u49828 \u53944  \u54596 \u46300  \u49440 \u53469  \u54980  \u53581 \u49828 \u53944  \u51077 \u47141 \
+    await setValue(driver, '//android.widget.EditText[@resource-id="com.kakao.talk.jordy:id/content_edit"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u54624  \u51068  \u51228 \u47785 ");\
+\
+    // \uc0\u51068 \u51221  \u51200 \u51109 \
+    await clickElement(driver, '//*[@text="\uc0\u51200 \u51109 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u51648 \u46020  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[8]');\
+\
+    // \uc0\u51648 \u46020  \u51204 \u49569 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.LinearLayout[@resource-id="com.kakao.talk:id/box_wrap"]');\
+\
+    // +\uc0\u47700 \u45684  \u45796 \u51020 \u51004 \u47196  \u51060 \u46041 \
+    await clickElement(driver, '//android.widget.ImageView[@content-desc="\uc0\u45796 \u51020 "]');\
+\
+    // \uc0\u52897 \u52376  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[1]');\
+\
+    // \uc0\u52897 \u52376  \u50689 \u50669  \u51648 \u51221 \
+    await clickElement(driver, '//android.widget.LinearLayout[@resource-id="com.kakao.talk:id/container"]/android.widget.LinearLayout');\
+    await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/address"]');\
+\
+    // \uc0\u51200 \u51109 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageButton[@content-desc="\uc0\u51200 \u51109 \u54616 \u44592 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u52897 \u52376  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[1]');\
+\
+    // \uc0\u52897 \u52376  \u50689 \u50669  \u51648 \u51221 \
+    await clickElement(driver, '//android.widget.LinearLayout[@resource-id="com.kakao.talk:id/container"]/android.widget.LinearLayout');\
+    await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/address"]');\
+\
+    // \uc0\u44277 \u50976 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageButton[@content-desc="\uc0\u44277 \u50976 \u54616 \u44592 "]');\
+    await clickElement(driver, '(//android.view.View[@resource-id="com.kakao.talk:id/profile"])[1]');\
+    await setValue(driver, '//android.widget.EditText[@resource-id="com.kakao.talk:id/edit_text"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u52897 \u52376  \u44277 \u50976 ");\
+    await clickElement(driver, '//*[@text="\uc0\u48372 \u45236 \u44592 "]');\
+\
+    //10\uc0\u52488  \u45824 \u44592 \u54980  \u49884 \u51089 \
+    await driver.pause(10000);\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u51020 \u49457 \u47700 \u49884 \u51648  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[2]');\
+\
+    // \uc0\u44036 \u54200  \u45433 \u51020  \u48260 \u53948  \u49324 \u50857  \u49440 \u53469 \
+    // await clickElement(driver, '//android.widget.CheckBox[@resource-id="com.kakao.talk:id/check_box"]');\
+\
+    // \uc0\u51020 \u49457 \u47700 \u49884 \u51648  \u45433 \u51020  \u49884 \u51089 \
+    await clickElement(driver, '//android.widget.ImageButton[@content-desc="\uc0\u45433 \u51020  \u49884 \u51089 "]');\
+\
+    //10\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(10000);\
+\
+    // \uc0\u51204 \u49569 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u51204 \u49569 "]');\
+\
+    // \uc0\u44036 \u54200  \u45433 \u51020  \u48260 \u53948  \u49440 \u53469  \u54616 \u50668  \u51204 \u49569 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/optional_send"]');\
+    await clickElement(driver, '//android.widget.ImageButton[@resource-id="com.kakao.talk:id/record"]');\
+    await driver.pause(10000);\
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u51204 \u49569 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u52852 \u52852 \u50724  \u54532 \u47196 \u54596  \u45800 \u51068  \u51204 \u49569 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[3]');\
+    await clickElement(driver, '//*[@text="\uc0\u52852 \u52852 \u50724 \u53665  \u54532 \u47196 \u54596  \u48372 \u45236 \u44592 "]');\
+    await clickElement(driver, '(//android.widget.RelativeLayout[@resource-id="com.kakao.talk:id/deactive_background"])[1]/android.view.ViewGroup');\
+    await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+\
+    // \uc0\u52852 \u52852 \u50724  \u54532 \u47196 \u54596  2\u44060  \u51060 \u49345  \u51204 \u49569 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[3]');\
+    await clickElement(driver, '//*[@text="\uc0\u52852 \u52852 \u50724 \u53665  \u54532 \u47196 \u54596  \u48372 \u45236 \u44592 "]');\
+    await clickElement(driver, '(//android.widget.RelativeLayout[@resource-id="com.kakao.talk:id/deactive_background"])[1]/android.view.ViewGroup');\
+    await clickElement(driver, '(//android.widget.RelativeLayout[@resource-id="com.kakao.talk:id/deactive_background"])[2]/android.view.ViewGroup');\
+    await clickElement(driver, '(//android.widget.RelativeLayout[@resource-id="com.kakao.talk:id/deactive_background"])[3]/android.view.ViewGroup');\
+    await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+\
+    // \uc0\u50672 \u46973 \u52376  \u45800 \u51068  \u51204 \u49569 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[3]');\
+    await clickElement(driver, '//*[@text="\uc0\u50672 \u46973 \u52376  \u48372 \u45236 \u44592 "]');\
+    await clickElement(driver, '//*[@text="\uc0\u12593 .\u47560 \u44536  \u51088 \u46041 \u54868  \u50672 \u46973 \u52376 "]');\
+    await clickElement(driver, '//*[@text="\uc0\u51204 \u49569 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u54028 \u51068  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[4]');\
+\
+    // \uc0\u54028 \u51068 \u50640 \u49436  \u49440 \u53469  \u54980  \u54637 \u47785  1 \u51204 \u49569 \
+    await clickElement(driver, '//*[@text="\uc0\u54028 \u51068 \u50640 \u49436  \u49440 \u53469 "]');\
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.android.documentsui:id/icon_thumb"])[1]');\
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[4]');\
+\
+    // \uc0\u50536 \u48276 \u50640 \u49436  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//*[@text="\uc0\u50536 \u48276 \u50640 \u49436  \u49440 \u53469 "]');\
+\
+    // \uc0\u51204 \u52404  \u44050 \u51012  \u49440 \u53469 \u54616 \u50668  \u50536 \u48276  \u51652 \u51077  \u54980  \u53945 \u51221 \u51340 \u54364  \u53485  \u54980  \u49828 \u50752 \u51060 \u54532 \u47196  \u49324 \u51652 \u51204 \u49569 \
+    try \{\
+      // \uc0\u47217 \u54532 \u47112 \u49828 \u54624  \u50836 \u49548 \u51032  XPath\
+      const elementXPath = '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/thumbnail"])[2]';\
+\
+      // \uc0\u47217 \u54532 \u47112 \u49828  (Long Press) \u48143  \u50500 \u47000 \u47196  \u49828 \u50752 \u51060 \u54532  (Swipe)\
+      await driver.touchAction([\
+        \{ action: 'press', element: await driver.$(elementXPath) \},\
+        \{ action: 'moveTo', x: 534, y: 1896 \},  // \uc0\u49828 \u50752 \u51060 \u54532  \u44144 \u47532  \u48143  \u48169 \u54693  \u51312 \u51208 \
+        \{ action: 'release' \},\
+      ]);\
+\
+      await clickElement(driver, '//*[@text="\uc0\u51204 \u49569 "]');\
+\
+      // 20\uc0\u52488  \u45824 \u44592 \
+      await driver.pause(20000);\
+    \} catch (error) \{\
+      console.error('Error:', error);\
+    \}\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u54028 \u51068  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[4]');\
+\
+    // 10\uc0\u52488  \u45824 \u44592  \u54028 \u51068  \u51204 \u49569  \u46364 \u47112 \u51060  \u49884 \u44036 \u46412 \u47928 \u50640  \u44036 \u54841  \u51204 \u49569 \u46104 \u51648  \u50506 \u45716  \u44221 \u50864 \u44032  \u51080 \u51020 \
+    await driver.pause(10000);\
+\
+    // \uc0\u52572 \u44540  \u48372 \u45240  \u54028 \u51068  \u54637 \u47785  \u51204 \u49569 \
+    await clickElement(driver, '//androidx.compose.ui.platform.ComposeView/android.view.View/android.view.View[4]/android.view.View[1]/android.widget.Button');\
+\
+    // \uc0\u52572 \u44540 \u50640  \u48372 \u45240  \u54028 \u51068  \u51204 \u52404  \u49325 \u51228 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[4]');\
+    await clickElement(driver, '//*[@text="\uc0\u51204 \u52404 \u49325 \u51228 "]');\
+    await clickElement(driver, '//*[@text="\uc0\u49325 \u51228 "]');\
+\
+    // 5\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(5000);\
+\
+    // \uc0\u48624  \u50500 \u50883 \
+    await driver.pressKeyCode(4);\
+\
+    // 5\uc0\u52488  \u45824 \u44592  \
+    await driver.pause(5000);\
+\
+    //\uc0\u48036 \u51649  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[5]');\
+    await driver.pause(5000);\
+    await setValue(driver, '//android.widget.EditText[@resource-id="search__word"]', "Hype boy");\
+    await clickElement(driver, '//android.widget.Button[@text="\uc0\u52286 \u44592 "]');\
+\
+    // \uc0\u48036 \u51649  \u45800 \u51068  \u51204 \u49569  \
+    await clickElement(driver, '//android.widget.ListView[@resource-id="commonList"]/android.view.View[1]/android.view.View[2]/android.view.View[1]');\
+    await clickElement(driver, '//android.widget.TextView[@text="\uc0\u48372 \u45236 \u44592 1"]');\
+\
+    // 5\uc0\u52488  \u45824 \u44592  \
+    await driver.pause(5000);\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]')\
+\
+    //\uc0\u46972 \u51060 \u48652 \u53665  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[6]');\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.vox:id/livetalk_start_button"]');\
+    await driver.pause(10000);\
+    await driver.touchAction([\
+      \{ action: 'tap', x: 100, y: 100 \}]); // \uc0\u51340 \u54364 \u45716  \u54868 \u47732 \u50640 \u49436  \u50896 \u54616 \u45716  \u50948 \u52824 \u47196  \u49444 \u51221 \
+    await clickElement(driver, '//*[@text="\uc0\u51333 \u47308 "]');\
+    await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+\
+    // #\uc0\u48260 \u53948  \u51228 \u48708 \u48977 \u44592  \u51204 \u49569 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search_sharp_button"]');\
+    await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/keyword" and @text="\uc0\u51228 \u48708 \u48977 \u44592 "]');\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.jordy:id/share"]');\
+\
+    // #\uc0\u48260 \u53948  \u51228 \u48708 \u48977 \u44592  \u51204 \u49569 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search_sharp_button"]');\
+    await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/keyword" and @text="\uc0\u45216 \u50472 "]');\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.jordy:id/share"]');\
+\
+    // #\uc0\u48260 \u53948  \u51228 \u48708 \u48977 \u44592  \u51204 \u49569 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search_sharp_button"]');\
+    await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/keyword" and @text="D-DAY"]');\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.jordy:id/share"]');\
+\
+    // #\uc0\u48260 \u53948  \u53581 \u49828 \u53944  \u51649 \u51217  \u51077 \u47141  \u51204 \u49569 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search_sharp_button"]');\
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@content-desc="\uc0\u49397 \u44160 \u49353 , \u53581 \u49828 \u53944  \u54596 \u46300 "]', `\u52852 \u52852 \u50724 `);\
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search"]');\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.jordy:id/share"]');\
+\
+    // \uc0\u49324 \u51060 \u46300  \u47700 \u45684  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u47700 \u45684  \u45908 \u48372 \u44592 "]');\
+\
+    // \uc0\u53665  \u44172 \u49884 \u54032  \u49440 \u53469  \
+    await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/title_text" and @text="\uc0\u53665 \u44172 \u49884 \u54032 "]');\
+\
+    // \uc0\u44544 \u50416 \u44592  \u48260 \u53948  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u44544 \u50416 \u44592 "]');\
+\
+    // \uc0\u44544 \u50416 \u44592 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk.moim:id/content_edit"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u51204 \u52404  \u44277 \u51648  \u51077 \u47141 ");\
+\
+    // \uc0\u50756 \u47308  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@text="\uc0\u50756 \u47308 "]');\
+\
+    // \uc0\u44277 \u51648  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.LinearLayout[@content-desc="\uc0\u44277 \u51648 "]');\
+\
+    // \uc0\u44544 \u50416 \u44592  \u48260 \u53948  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u44544 \u50416 \u44592 "]');\
+\
+    // \uc0\u44544 \u50416 \u44592 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk.moim:id/content_edit"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u44277 \u51648  \u51077 \u47141 ");\
+\
+    // \uc0\u50756 \u47308  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@text="\uc0\u50756 \u47308 "]');\
+\
+    // \uc0\u49324 \u51652  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.TextView[@resource-id="android:id/text1" and @text="\uc0\u49324 \u51652 "]');\
+\
+    // \uc0\u49324 \u51652  \u50732 \u47532 \u44592 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u44544 \u50416 \u44592 "]');\
+\
+    // \uc0\u44544 \u50416 \u44592 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk.moim:id/content_edit"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u49324 \u51652  \u50732 \u47532 \u44592  \u53580 \u49828 \u53944 ");\
+\
+    // \uc0\u49324 \u51652  \u49440 \u53469 \
+    // await clickElement(driver, '/android.widget.ImageView[@content-desc="\uc0\u49324 \u51652 "]');\
+    await tapElement(driver, '\uc0\u49324 \u51652 ');\
+    try \{\
+      // "\uc0\u45796 \u49884  \u48372 \u51648  \u50506 \u51020 " \u53581 \u49828 \u53944 \u44032  \u51080 \u51004 \u47732  \u53364 \u47533 \
+      await clickElement(driver, '//*[@text="\uc0\u45796 \u49884 \u48372 \u51648 \u50506 \u51020 "]');\
+    \} catch (error) \{ \}\
+\
+    try \{\
+      // \uc0\u47217 \u54532 \u47112 \u49828 \u54624  \u50836 \u49548 \u51032  XPath\
+      const elementXPath = '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/thumbnail_preview"])[1]';\
+\
+      // \uc0\u47217 \u54532 \u47112 \u49828  (Long Press) \u48143  \u50500 \u47000 \u47196  \u49828 \u50752 \u51060 \u54532  (Swipe)\
+      await driver.touchAction([\
+        \{ action: 'press', element: await driver.$(elementXPath) \},\
+        \{ action: 'moveTo', x: 545, y: 1888 \},  // \uc0\u49828 \u50752 \u51060 \u54532  \u44144 \u47532  \u48143  \u48169 \u54693  \u51312 \u51208 \
+        \{ action: 'release' \},\
+      ]);\
+\
+      await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+\
+      // 5\uc0\u52488  \u45824 \u44592 \
+      await driver.pause(5000);\
+    \} catch (error) \{\
+      console.error('Error:', error);\
+    \}\
+\
+    // \uc0\u54869 \u51064  \u49440 \u53469 \
+    // await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+\
+    // \uc0\u50756 \u47308  \u49440 \u53469 \
+    await clickElement(driver, '//*[@text="\uc0\u50756 \u47308 "]');\
+\
+    // \uc0\u49324 \u51652  \u50629 \u47196 \u46300  \u49884 \u44036  \u46364 \u47112 \u51060 \
+    await driver.pause(20000);\
+\
+    // \uc0\u46041 \u50689 \u49345  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.TextView[@resource-id="android:id/text1" and @text="\uc0\u46041 \u50689 \u49345 "]');\
+\
+    // \uc0\u46041 \u50689 \u49345  \u50732 \u47532 \u44592  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u44544 \u50416 \u44592 "]');\
+\
+    // \uc0\u44544 \u50416 \u44592 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk.moim:id/content_edit"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u46041 \u50689 \u49345  \u50732 \u47532 \u44592  \u53580 \u49828 \u53944 ");\
+\
+    // \uc0\u46041 \u50689 \u49345  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.ImageView[@content-desc="\uc0\u46041 \u50689 \u49345 "]');\
+\
+    // \uc0\u52395 \u48264 \u51704  \u46041 \u50689 \u49345  \u49440 \u53469 \
+    await clickElement(driver, '//android.view.View[@resource-id="com.sec.android.gallery3d:id/gl_root_view"]/com.sec.samsung.gallery.glview.composeView.ThumbObject[1]');\
+\
+    // \uc0\u54869 \u51064  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@text="\uc0\u54869 \u51064 "]');\
+\
+    // \uc0\u50756 \u47308  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@text="\uc0\u50756 \u47308 "]');\
+\
+    // \uc0\u50629 \u47196 \u46300  \u46364 \u47112 \u51060 \u44050  20\u52488 \
+    await driver.pause(20000);\
+\
+    // \uc0\u54028 \u51068  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.TextView[@resource-id="android:id/text1" and @text="\uc0\u54028 \u51068 "]');\
+\
+    // \uc0\u54028 \u51068  \u50732 \u47532 \u44592  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u44544 \u50416 \u44592 "]');\
+\
+    // \uc0\u44544 \u50416 \u44592 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk.moim:id/content_edit"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u54028 \u51068  \u50732 \u47532 \u44592  \u53580 \u49828 \u53944 ");\
+\
+    // \uc0\u54028 \u51068  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.ImageView[@content-desc="\uc0\u54028 \u51068 "]');\
+\
+    // \uc0\u52395 \u48264 \u51704  \u54028 \u51068  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.android.documentsui:id/icon_thumb"])[1]');\
+\
+    // \uc0\u50676 \u44592  \u53364 \u47533 \
+    // await clickElement(driver, '//android.widget.Button[@resource-id="com.android.documentsui:id/menu_open"]');\
+\
+    // \uc0\u50756 \u47308  \u53364 \u47533 \
+    await clickElement(driver, '//android.widget.Button[@text="\uc0\u50756 \u47308 "]');\
+\
+    // \uc0\u54028 \u51068  \u50629 \u47196 \u46300  20\u52488  \u45824 \u44592 \
+    await driver.pause(20000);\
+\
+    // \uc0\u53804 \u54364  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.TextView[@resource-id="android:id/text1" and @text="\uc0\u53804 \u54364 "]');\
+\
+    // \uc0\u53804 \u54364  \u44544 \u50416 \u44592  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u44544 \u50416 \u44592 "]');\
+\
+    // \uc0\u53804 \u54364  \u51228 \u47785  \u51077 \u47141 \
+    await setValue(driver, '//android.widget.EditText[@resource-id="com.kakao.talk.moim:id/poll_subject_edit"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u53804 \u54364  \u53580 \u49828 \u53944 ");\
+\
+    // \uc0\u53804 \u54364  \u54637 \u47785  1 \u51077 \u47141 \
+    await clickElement(driver, '(//android.widget.EditText[@resource-id="com.kakao.talk.moim:id/poll_item_title_edit"])[1]');\
+    await setValue(driver, '(//android.widget.EditText[@resource-id="com.kakao.talk.moim:id/poll_item_title_edit"])[1]', "\uc0\u53580 \u49828 \u53944  1\u54637 \u47785 ");\
+\
+    // \uc0\u53804 \u54364  \u54637 \u47785  2 \u51077 \u47141 \
+    await clickElement(driver, '(//android.widget.EditText[@resource-id="com.kakao.talk.moim:id/poll_item_title_edit"])[2] ');\
+    await setValue(driver, '(//android.widget.EditText[@resource-id="com.kakao.talk.moim:id/poll_item_title_edit"])[2]', "\uc0\u53580 \u49828 \u53944  2\u54637 \u47785 ");\
+\
+    // \uc0\u53804 \u54364  \u54637 \u47785  3 \u51077 \u47141 \
+    await clickElement(driver, '(//android.widget.EditText[@resource-id="com.kakao.talk.moim:id/poll_item_title_edit"])[3]');\
+    await setValue(driver, '(//android.widget.EditText[@resource-id="com.kakao.talk.moim:id/poll_item_title_edit"])[3]', "\uc0\u53580 \u49828 \u53944  3\u54637 \u47785 ");\
+\
+    // \uc0\u50756 \u47308  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@text="\uc0\u50756 \u47308 "]');\
+\
+    // 3\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(3000);\
+\
+    // \uc0\u48177 \u53412 \u47196  \u44172 \u49884 \u54032 \u50640 \u49436  \u45208 \u44032 \u44592 \
+    await driver.pressKeyCode(4);\
+\
+    // 5\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(5000);\
+\
+    // \uc0\u48624  \u50500 \u50883 \
+    await driver.pressKeyCode(4);\
+\
+    // + \uc0\u50500 \u51060 \u53080 \u51012  \u52286 \u50500 \u49436  \u53364 \u47533  (XPath \u44050 \u51004 \u47196  \u49688 \u51221 )\
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u45824 \u54868  \u49884 \u51089 \u54616 \u44592 "]');\
+\
+    // \uc0\u48708 \u48128  \u52292 \u54021  \u53581 \u49828 \u53944 \u47484  \u52286 \u50500 \u49436  \u53364 \u47533  (XPath \u44050 \u51004 \u47196  \u49688 \u51221 )\
+    await clickElement(driver, '//android.widget.TextView[@text="\uc0\u48708 \u48128 \u52292 \u54021 "]');\
+\
+    // \uc0\u52395  \u48264 \u51704  \u50976 \u51200  \u53364 \u47533  (XPath \u44050 \u51004 \u47196  \u49688 \u51221 )\
+    await clickElement(driver, '(//android.widget.RelativeLayout[@resource-id="com.kakao.talk:id/deactive_background"])[1]/android.view.ViewGroup');\
+\
+    // \uc0\u50976 \u51200  \u49440 \u53469  \u54980  \u54869 \u51064  \u48260 \u53948  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+\
+    for (let i = 1; i <= 2; i++) \{\
+      // \uc0\u53581 \u49828 \u53944  \u54596 \u46300 \u47484  \u52286 \u50500 \u49436  n\u54924  \u51077 \u47141 \
+      await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u53580 \u49828 \u53944  \u53581 \u49828 \u53944  $\{i\}\u54924  \u51204 \u49569 `);\
+\
+      // \uc0\u51204 \u49569  \u48260 \u53948  \u53364 \u47533 \u54616 \u44592 \
+      await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');\
+    \}\
+\
+    // \uc0\u47700 \u49884 \u51648  \u47217 \u54532 \u47112 \u49828  \u46041 \u51089 \u54616 \u44592  or \u47784 \u46304  \u45824 \u54868 \u48169 \u50640 \u49436  \u47700 \u49884 \u51648  \u49325 \u51228 \
+    await touchAction(driver, `//android.widget.TextView[@resource-id="com.kakao.talk:id/message" and @text="\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u53580 \u49828 \u53944  \u53581 \u49828 \u53944  1\u54924  \u51204 \u49569 "]`, 'longPress');\
+    await clickElement(driver, '//*[@text="\uc0\u49325 \u51228 "]');\
+    await clickElement(driver, '//*[@text="\uc0\u49325 \u51228 \u54616 \u44592 "]');\
+    await clickElement(driver, '//*[@text="\uc0\u49325 \u51228 "]');\
+\
+    // \uc0\u47553 \u53356  \u51204 \u49569 \u54616 \u44592 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `naver.com`);\
+\
+    // \uc0\u51204 \u49569  \u48260 \u53948  \u53364 \u47533 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');\
+\
+    // \uc0\u54616 \u51060 \u54140 \u47553 \u53356  \u47568 \u54413 \u49440  \u51204 \u49569 \u54616 \u44592 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `\uc0\u48372 \u51060 \u49828 \u53665 , \u54168 \u51060 \u49828 \u53665 , 110-1234-1234, 010-1234-5678`);\
+\
+    // \uc0\u51204 \u49569  \u48260 \u53948  \u53364 \u47533 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');\
+\
+    // \uc0\u53581 \u49828 \u53944 \u47564  500\u51088  \u51204 \u49569 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 \
+  500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 \
+  500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 \
+  500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 \
+  500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 `); // \u51077 \u47141 \u54624  \u53581 \u49828 \u53944  \u45236 \u50857 \u51004 \u47196  \u49688 \u51221 \
+\
+    /* const textField4 = await driver.$('//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]'); // XPath \uc0\u44050 \u51004 \u47196  \u49892 \u51228  \u54868 \u47732 \u50640  \u45824 \u54620  \u51221 \u48372 \u47196  \u49688 \u51221 \
+    await textField4.setValue(`500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 \
+    500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 \
+    500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 \
+    500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 \
+    500\uc0\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 500\u51088 `); // \u51077 \u47141 \u54624  \u53581 \u49828 \u53944  \u45236 \u50857 \u51004 \u47196  \u49688 \u51221 */\
+\
+    // \uc0\u51204 \u49569  \u48260 \u53948  \u53364 \u47533 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');\
+\
+    // \uc0\u51060 \u47784 \u54000 \u53080  \u53485  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/emoticon_button"]');\
+\
+\
+    // \
+    try \{\
+      await clickElement(driver, '//*[@text="\uc0\u45796 \u50868 \u47196 \u46300 "]');\
+    \} catch \{ \}\
+\
+    for (let i = 1; i <= 4; i++) \{\
+      await touchAction(driver, `(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[$\{i\}]`, [\
+        \{ action: 'tap', x: 0, y: 0 \},\
+        \{ action: 'tap', x: 0, y: 0 \}\
+      ]);\
+    \}\
+    /*\
+    // \uc0\u51060 \u47784 \u54000 \u53080  \u45908 \u48660 \u53485 \u54616 \u50668  \u51204 \u49569 \
+    for (let i = 1; i <= 4; i++) \{\
+      await touchAction(driver, `(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[$\{i\}]`, [\
+        \{ action: 'tap', x: 0, y: 0 \},\
+        \{ action: 'tap', x: 0, y: 0 \}\
+        ]);\
+      \
+    /*  const emoticonIcon = await driver.$(`(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[$\{i\}]`);\
+      await emoticonIcon.touchAction([\
+        \{ action: 'tap', x: 0, y: 0 \},\
+        \{ action: 'tap', x: 0, y: 0 \}\
+        ]); \
+      \}*/\
+\
+    // \uc0\u53581 \u49828 \u53944  \u51077 \u47141 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `\uc0\u51060 \u47784 \u54000 \u53080 \u44284  \u54632 \u44760  \u51204 \u49569 `);\
+    /* const textField5 = await driver.$('//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]'); // XPath \uc0\u44050 \u51004 \u47196  \u49892 \u51228  \u54868 \u47732 \u50640  \u45824 \u54620  \u51221 \u48372 \u47196  \u49688 \u51221 \
+    await textField5.setValue(`\uc0\u51060 \u47784 \u54000 \u53080 \u44284  \u54632 \u44760  \u51204 \u49569 `); // \u51077 \u47141 \u54624  \u53581 \u49828 \u53944  \u45236 \u50857 \u51004 \u47196  \u49688 \u51221  */\
+\
+    // \uc0\u51060 \u47784 \u54000 \u53080  \u53485  \u49440 \u53485  \u54980  \u45908 \u48660 \u53485 \u51004 \u47196  \u51060 \u47784 \u54000 \u53080  \u51204 \u49569 \
+    await touchAction(driver, `(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[1]`, [\
+      \{ action: 'tap', x: 0, y: 0 \},\
+      \{ action: 'tap', x: 0, y: 0 \}\
+    ]);\
+    /* const emoticonIcon = await driver.$(`(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[1]`);\
+    await emoticonIcon.touchAction([\
+      \{ action: 'tap', x: 0, y: 0 \},\
+      \{ action: 'tap', x: 0, y: 0 \}\
+      ]); */\
+\
+    // \uc0\u44592 \u48376  \u51060 \u47784 \u54000 \u53080  \u51204 \u49569 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `(\uc0\u54616 \u54616 ), (\u54616 \u53944 \u49093 ), (\u50864 \u50752 ), (\u49900 \u44033 )`);\
+    /* const textField10 = await driver.$('//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]'); // XPath \uc0\u44050 \u51004 \u47196  \u49892 \u51228  \u54868 \u47732 \u50640  \u45824 \u54620  \u51221 \u48372 \u47196  \u49688 \u51221 \
+    await textField10.setValue(`(\uc0\u54616 \u54616 ), (\u54616 \u53944 \u49093 ), (\u50864 \u50752 ), (\u49900 \u44033 )`); */\
+\
+    // \uc0\u51204 \u49569  \u48260 \u53948  \u53364 \u47533 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');\
+\
+    // \uc0\u44592 \u48376  \u51060 \u47784 \u54000 \u53080  + \u53581 \u49828 \u53944  \u51077 \u47141  \u51204 \u49569 \
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `(\uc0\u54616 \u54616 ), (\u54616 \u53944 \u49093 ), (\u50864 \u50752 ), (\u49900 \u44033 ) + \u44592 \u48376 \u51060 \u47784 \u54000 \u53080 \u44284  \u53581 \u49828 \u53944  \u44057 \u51060  \u51204 \u49569 `);\
+    /* const textField11 = await driver.$('//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]'); // XPath \uc0\u44050 \u51004 \u47196  \u49892 \u51228  \u54868 \u47732 \u50640  \u45824 \u54620  \u51221 \u48372 \u47196  \u49688 \u51221 \
+    await textField11.setValue(`(\uc0\u54616 \u54616 ), (\u54616 \u53944 \u49093 ), (\u50864 \u50752 ), (\u49900 \u44033 ) + \u44592 \u48376 \u51060 \u47784 \u54000 \u53080 \u44284  \u53581 \u49828 \u53944  \u44057 \u51060  \u51204 \u49569 `); */\
+\
+    // \uc0\u51204 \u49569  \u48260 \u53948  \u53364 \u47533 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');\
+\
+    /* ------------\uc0\u53581 \u49828 \u53944  500\u51088  \u51077 \u47141  \u54980  \u51060 \u47784 \u54000 \u53080  \u51652 \u51077  \u49884  \u50620 \u47103  \u45432 \u52636  \u54869 \u51064  \u50668 \u48512 \u50640  \u45824 \u54620  \u44396 \u54788  \u50668 \u48512 \u44032  \u44032 \u45733 \u54620 \u51648  \u49373 \u44033 \u51473 ..... */\
+\
+\
+    // +\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u50536 \u48276  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[1]');\
+\
+    // 5\uc0\u52488  \u45824 \u44592  \
+    await driver.pause(5000);\
+\
+    // \uc0\u51204 \u52404  \u49440 \u53469 \
+    // await clickElement(driver, '//*[@text="\uc0\u51204 \u52404 "]');\
+    // x : 88 y : 2006\
+\
+    // \uc0\u51204 \u52404  \u44050 \u51012  \u49440 \u53469 \u54616 \u50668  \u50536 \u48276  \u51652 \u51077  \u54980  \u53945 \u51221 \u51340 \u54364  \u53485  \u54980  \u49828 \u50752 \u51060 \u54532 \u47196  \u49324 \u51652 \u51204 \u49569 \
+    try \{\
+      // \uc0\u53945 \u51221  \u51340 \u54364  \u53485  (Tap)\
+      await driver.touchAction([\
+        \{ action: 'tap', x: tapX, y: tapY \},\
+      ]);\
+\
+      // 5\uc0\u52488  \u45824 \u44592  \
+      await driver.pause(5000);\
+\
+      // \uc0\u47217 \u54532 \u47112 \u49828 \u54624  \u50836 \u49548 \u51032  XPath\
+      const elementXPath = '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/thumbnail"])[2]';\
+\
+      // \uc0\u47217 \u54532 \u47112 \u49828  (Long Press) \u48143  \u50500 \u47000 \u47196  \u49828 \u50752 \u51060 \u54532  (Swipe)\
+      await driver.touchAction([\
+        \{ action: 'press', element: await driver.$(elementXPath) \},\
+        \{ action: 'moveTo', x: 534, y: 1896 \},  // \uc0\u49828 \u50752 \u51060 \u54532  \u44144 \u47532  \u48143  \u48169 \u54693  \u51312 \u51208 \
+        \{ action: 'release' \},\
+      ]);\
+\
+      await clickElement(driver, '//*[@text="\uc0\u51204 \u49569 "]');\
+\
+      // 20\uc0\u52488  \u45824 \u44592 \
+      await driver.pause(20000);\
+    \} catch (error) \{\
+      console.error('Error:', error);\
+    \}\
+\
+    // +\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u52852 \u47700 \u46972  \u54637 \u47785  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[2]');\
+\
+    // 1:1 \uc0\u52292 \u54021 \u48169 \u50640 \u49436  \u47784 \u46304  \u44428 \u54620 \u51012  \u54728 \u50857 \u54644 \u49436  \u45432 \u52636  \u50504 \u46112 \u44163 \u51004 \u47196  \u49373 \u44033 \u54616 \u50668  \u48148 \u47196  \u52524 \u50689  \u49884 \u51089 \
+    await clickElement(driver, '//*[@text="\uc0\u49324 \u51652  \u52524 \u50689 "]');\
+\
+    // \uc0\u49324 \u51652  \u52524 \u50689  \u49884 \u51089 \
+    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="\uc0\u49492 \u53552 "]')\
+\
+    // \uc0\u49324 \u51652 \u52524 \u50689  \u54980  5\u52488  \u45824 \u44592 \
+    await driver.pause(5000);\
+\
+    // \uc0\u49324 \u51652  \u52524 \u50689  \u54869 \u51064  \u54980  \u51204 \u49569 \
+    await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+    await clickElement(driver, '//*[@text="\uc0\u51204 \u49569 "]');\
+\
+    // \uc0\u46041 \u50689 \u49345  \u51204 \u49569  \u54980  5\u52488  \u45824 \u44592 \
+    await driver.pause(5000);\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u52852 \u47700 \u46972  \u54637 \u47785  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[2]');\
+\
+    // \uc0\u46041 \u50689 \u49345  \u52524 \u50689 \u51004 \u47196  \u51060 \u46041 \
+    await clickElement(driver, '//*[@text="\uc0\u46041 \u50689 \u49345  \u52524 \u50689 "]');\
+\
+    // \uc0\u46041 \u50689 \u49345  \u52524 \u50689  \u49884 \u51089  \u48143  \u51333 \u47308 \
+    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="\uc0\u45433 \u54868 "]');\
+\
+    // 10\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(10000);\
+    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="\uc0\u51473 \u51648 "]');\
+\
+    // \uc0\u46041 \u50689 \u49345  \u54869 \u51064  \u54980  \u51204 \u49569 \
+    await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+    await clickElement(driver, '//*[@text="\uc0\u51204 \u49569 "]');\
+\
+    // 10\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(10000);\
+\
+    // \uc0\u48624  \u50500 \u50883  \u48177 \u53412 \
+    await driver.pressKeyCode(4);\
+\
+    // \uc0\u50724 \u54536  \u52292 \u54021 \u53485 \u51004 \u47196  \u51060 \u46041 \
+    await clickElement(driver, '//*[@text="\uc0\u50724 \u54536 \u52292 \u54021 "]');\
+\
+    // \uc0\u52395  \u48264 \u51704  \u50724 \u54536 \u52292 \u54021 \u48169  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.LinearLayout[@resource-id="com.kakao.talk:id/title"])[1]/android.widget.LinearLayout[1]/android.view.ViewGroup');\
+\
+    // +\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u50536 \u48276  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[1]');\
+\
+    // \uc0\u50724 \u54536 \u52292 \u54021 \u48169  \u50536 \u48276  \u51652 \u51077  \u49884  \u48520 \u48277 \u52524 \u50689 \u47932  \u46321  \u49885 \u48324  \u48143  \u44172 \u51116  \u51228 \u54620  \u54045 \u50629  \u54869 \u51064 \
+\
+    // \uc0\u44428 \u54620  \u54045 \u50629 \u51060  \u46896 \u44221 \u50864  \u54728 \u50857 \u51012  \u49440 \u53469  \u44428 \u54620  \u54045 \u50629 \u51060  \u48156 \u49373 \u54616 \u51648  \u50506 \u51012  \u49884  \u51648 \u46020  \u49440 \u53469 \u51004 \u47196  \u45796 \u51020  \u49828 \u53485  \u49884 \u51089 \
+    try \{\
+      // \uc0\u54869 \u51064 \u51060 \u46972 \u45716  \u53581 \u49828 \u53944 \u44032  \u51080 \u51004 \u47732  \u53364 \u47533 \
+      await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+    \} catch (error) \{ \}\
+\
+    //10\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(10000);\
+\
+    // \uc0\u51648 \u51221 \u54620 \u44275  \u53485 \
+    try \{\
+      // \uc0\u53945 \u51221  \u51340 \u54364  \u53485  (Tap)\
+      await driver.touchAction([\
+        \{ action: 'tap', x: tapX, y: tapY \},\
+      ]);\
+\
+      // 5\uc0\u52488  \u45824 \u44592  \
+      await driver.pause(5000);\
+\
+      // \uc0\u47217 \u54532 \u47112 \u49828 \u54624  \u50836 \u49548 \u51032  XPath\
+      const elementXPath = '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/thumbnail"])[2]';\
+\
+      // \uc0\u47217 \u54532 \u47112 \u49828  (Long Press) \u48143  \u50500 \u47000 \u47196  \u49828 \u50752 \u51060 \u54532  (Swipe)\
+      await driver.touchAction([\
+        \{ action: 'press', element: await driver.$(elementXPath) \},\
+        \{ action: 'moveTo', x: 534, y: 1896 \},  // \uc0\u49828 \u50752 \u51060 \u54532  \u44144 \u47532  \u48143  \u48169 \u54693  \u51312 \u51208 \
+        \{ action: 'release' \},\
+      ]);\
+\
+      await clickElement(driver, '//*[@text="\uc0\u51204 \u49569 "]');\
+\
+      // 20\uc0\u52488  \u45824 \u44592 \
+      await driver.pause(20000);\
+    \} catch (error) \{\
+      console.error('Error:', error);\
+    \}\
+\
+    try \{\
+      // +\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+      await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+      // \uc0\u50536 \u48276  \u49440 \u53469 \u54616 \u44592 \
+      await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[1]');\
+\
+      // 5\uc0\u52488  \u45824 \u44592  \
+      await driver.pause(5000);\
+\
+      // \uc0\u51648 \u51221 \u54620 \u44275  \u53485 \
+      await driver.touchAction([\
+        \{ action: 'tap', x: tapX, y: tapY \},\
+      ]);\
+\
+\
+      try \{\
+        // \uc0\u54869 \u51064  \u51060 \u46972 \u45716  \u53581 \u49828 \u53944 \u44032  \u51080 \u51004 \u47732  \u53364 \u47533 \
+        await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+      \} catch (error) \{ \}\
+\
+      // \uc0\u49324 \u51652  \u47926 \u50612 \u49436  \u48372 \u45236 \u49884  \u49440 \u53469 \
+      await clickElement(driver, '//*[@text="\uc0\u49324 \u51652  \u47926 \u50612 \u48372 \u45236 \u44592 "]');\
+\
+\
+      // \uc0\u47217 \u54532 \u47112 \u49828 \u54624  \u50836 \u49548 \u51032  XPath\
+      const elementXPath2 = '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/thumbnail"])[2]';\
+\
+      // 5\uc0\u52488  \u45824 \u44592  \
+      await driver.pause(5000);\
+\
+      // \uc0\u47217 \u54532 \u47112 \u49828  (Long Press) \u48143  \u50500 \u47000 \u47196  \u49828 \u50752 \u51060 \u54532  (Swipe)\
+      await driver.touchAction([\
+        \{ action: 'press', element: await driver.$(elementXPath2) \},\
+        \{ action: 'moveTo', x: 534, y: 1896 \},  // \uc0\u49828 \u50752 \u51060 \u54532  \u44144 \u47532  \u48143  \u48169 \u54693  \u51312 \u51208 \
+        \{ action: 'release' \},\
+      ]);\
+\
+      // \uc0\u51204 \u49569  \u49440 \u53469 \
+      await clickElement(driver, '//*[@text="\uc0\u51204 \u49569 "]');\
+\
+      // 20\uc0\u52488  \u45824 \u44592 \
+      await driver.pause(20000);\
+    \} catch (error) \{\
+\
+    \}\
+\
+    // +\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u52852 \u47700 \u46972  \u54637 \u47785  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[2]');\
+\
+    // \uc0\u49324 \u51652 \u52524 \u50689 \u51004 \u47196  \u51060 \u46041 \
+    await clickElement(driver, '//*[@text="\uc0\u49324 \u51652  \u52524 \u50689 "]');\
+\
+    // \uc0\u49324 \u51652  \u52524 \u50689  \u49884 \u51089 \
+    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="\uc0\u49492 \u53552 "]')\
+\
+    // 3\uc0\u52488  \u45824 \u44592  \u54980  \u51204 \u49569 \
+    await driver.pause(3000);\
+    // \uc0\u49324 \u51652  \u52524 \u50689  \u54869 \u51064  \u54980  \u51204 \u49569 \
+    await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+    // 3\uc0\u52488  \u45824 \u44592  \u54980  \u51204 \u49569 \
+    await driver.pause(3000);\
+    await clickElement(driver, '//*[@text="\uc0\u51204 \u49569 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u52852 \u47700 \u46972  \u54637 \u47785  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[2]');\
+\
+    // \uc0\u46041 \u50689 \u49345  \u52524 \u50689 \u51004 \u47196  \u51060 \u46041 \
+    await clickElement(driver, '//*[@text="\uc0\u46041 \u50689 \u49345  \u52524 \u50689 "]');\
+\
+    // \uc0\u46041 \u50689 \u49345  \u52524 \u50689  \u49884 \u51089  \u48143  \u51333 \u47308 \
+    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="\uc0\u45433 \u54868 "]');\
+    // 10\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(10000);\
+    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="\uc0\u51473 \u51648 "]');\
+\
+    // \uc0\u46041 \u50689 \u49345  \u54869 \u51064  \u54980  \u51204 \u49569 \
+    await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+    await clickElement(driver, '//*[@text="\uc0\u51204 \u49569 "]');\
+\
+    // 10\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(10000);\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u48372 \u51060 \u49828 \u47352  \u54637 \u47785  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[4]');\
+\
+    // \uc0\u53364 \u47536 \u54620  \u49436 \u48708 \u49828  \u51060 \u50857 \u51012  \u50948 \u54620  \u51020 \u49457  \u49688 \u51665  \u46041 \u51032  \u54045 \u50629  \u46041 \u51032  \u49440 \u53469  \u54980  20\u52488  \u45824 \u44592 \
+    try \{\
+      // \uc0\u46041 \u51032 \u46972 \u45716  \u53581 \u49828 \u53944 \u44032  \u51080 \u51004 \u47732  \u53364 \u47533 \
+      await clickElement(driver, '//*[@text="\uc0\u46041 \u51032 "]');\
+    \} catch (error) \{ \}\
+\
+    // 20\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(20000);\
+\
+    // \uc0\u47564 \u46308 \u44592  \u49440 \u53469  \u54980  \u49373 \u49457 \
+    await clickElement(driver, '//*[@text="\uc0\u47564 \u46308 \u44592 "]');\
+\
+\
+    // \uc0\u45936 \u51060 \u53552  \u50508 \u47548  \u54045 \u50629  \u48156 \u49373  \u45796 \u49884 \u48372 \u51648 \u50506 \u51020  \u49440 \u53469  \u54980  20\u52488  \u45824 \u44592 \
+    try \{\
+      // \uc0\u46041 \u51032 \u46972 \u45716  \u53581 \u49828 \u53944 \u44032  \u51080 \u51004 \u47732  \u53364 \u47533 \
+      await clickElement(driver, '//*[@text="\uc0\u45796 \u49884 \u48372 \u51648 \u50506 \u51020 "]');\
+    \} catch (error) \{ \}\
+\
+    // 20\uc0\u52488 \u45824 \u44592 \
+    await driver.pause(20000);\
+\
+    // \uc0\u48372 \u51060 \u49828 \u47352  \u45208 \u44032 \u44592  \u48143  \u51333 \u47308 \
+    await clickElement(driver, '//android.widget.ImageButton[@content-desc="\uc0\u48372 \u51060 \u49828 \u47352  \u45208 \u44032 \u44592 "]');\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk:id/ok"]');\
+\
+    // \uc0\u51648 \u46020  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[5]');\
+\
+    // \uc0\u51648 \u46020  \u51204 \u49569 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.LinearLayout[@resource-id="com.kakao.talk:id/box_wrap"]');\
+\
+    // \uc0\u52897 \u52376  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[6]');\
+\
+    // \uc0\u52897 \u52376  \u50689 \u50669  \u51648 \u51221 \
+    await clickElement(driver, '(//android.widget.FrameLayout[@resource-id="com.kakao.talk:id/voxroom_message_btn"])[1]/android.widget.RelativeLayout');\
+    await clickElement(driver, '//android.widget.LinearLayout[@resource-id="com.kakao.talk:id/location"]/android.widget.FrameLayout/android.view.View');\
+\
+    // \uc0\u51200 \u51109 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageButton[@content-desc="\uc0\u51200 \u51109 \u54616 \u44592 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u52897 \u52376  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[6]');\
+\
+    // \uc0\u52897 \u52376  \u50689 \u50669  \u51648 \u51221 \
+    await clickElement(driver, '(//android.widget.FrameLayout[@resource-id="com.kakao.talk:id/voxroom_message_btn"])[1]/android.widget.RelativeLayout');\
+    await clickElement(driver, '//android.widget.LinearLayout[@resource-id="com.kakao.talk:id/location"]/android.widget.FrameLayout/android.view.View');\
+\
+    // \uc0\u44277 \u50976 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageButton[@content-desc="\uc0\u44277 \u50976 \u54616 \u44592 "]');\
+    await clickElement(driver, '(//android.view.View[@resource-id="com.kakao.talk:id/profile"])[1]');\
+    await setValue(driver, '//android.widget.EditText[@resource-id="com.kakao.talk:id/edit_text"]', "\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u52897 \u52376  \u44277 \u50976 ");\
+    /* const textField9 = await driver.$('//android.widget.EditText[@resource-id="com.kakao.talk:id/edit_text"]');\
+    await textField9.setValue("\uc0\u47560 \u51060 \u44536 \u47112 \u51060 \u49496  \u52897 \u52376  \u44277 \u50976 "); */\
+    await clickElement(driver, '//*[@text="\uc0\u48372 \u45236 \u44592 "]');\
+\
+    //10\uc0\u52488  \u45824 \u44592 \u54980  \u49884 \u51089 \
+    await driver.pause(10000);\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u51020 \u49457 \u47700 \u49884 \u51648  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[7]');\
+\
+    // \uc0\u44036 \u54200  \u45433 \u51020  \u48260 \u53948  \u49324 \u50857  \u49440 \u53469 \
+    // await clickElement(driver, '//android.widget.CheckBox[@resource-id="com.kakao.talk:id/check_box"]');\
+\
+    // \uc0\u51020 \u49457 \u47700 \u49884 \u51648  \u45433 \u51020  \u49884 \u51089 \
+    await clickElement(driver, '//android.widget.ImageButton[@content-desc="\uc0\u45433 \u51020  \u49884 \u51089 "]');\
+\
+    //10\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(10000);\
+\
+    // \uc0\u51204 \u49569 \
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u51204 \u49569 "]');\
+\
+    // \uc0\u44036 \u54200  \u45433 \u51020  \u48260 \u53948  \u49440 \u53469  \u54616 \u50668  \u51204 \u49569 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/optional_send"]');\
+    await clickElement(driver, '//android.widget.ImageButton[@resource-id="com.kakao.talk:id/record"]');\
+    await driver.pause(10000);\
+    await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u51204 \u49569 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u52852 \u52852 \u50724  \u54532 \u47196 \u54596  \u45800 \u51068  \u51204 \u49569 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[8]');\
+    await clickElement(driver, '//*[@text="\uc0\u52852 \u52852 \u50724 \u53665  \u54532 \u47196 \u54596  \u48372 \u45236 \u44592 "]');\
+    await clickElement(driver, '(//android.widget.RelativeLayout[@resource-id="com.kakao.talk:id/deactive_background"])[1]/android.view.ViewGroup');\
+    await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+\
+    // \uc0\u52852 \u52852 \u50724  \u54532 \u47196 \u54596  2\u44060  \u51060 \u49345  \u51204 \u49569 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[8]');\
+    await clickElement(driver, '//*[@text="\uc0\u52852 \u52852 \u50724 \u53665  \u54532 \u47196 \u54596  \u48372 \u45236 \u44592 "]');\
+    await clickElement(driver, '(//android.widget.RelativeLayout[@resource-id="com.kakao.talk:id/deactive_background"])[1]/android.view.ViewGroup');\
+    await clickElement(driver, '(//android.widget.RelativeLayout[@resource-id="com.kakao.talk:id/deactive_background"])[2]/android.view.ViewGroup');\
+    await clickElement(driver, '(//android.widget.RelativeLayout[@resource-id="com.kakao.talk:id/deactive_background"])[3]/android.view.ViewGroup');\
+    await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+\
+    // \uc0\u50672 \u46973 \u52376  \u45800 \u51068  \u51204 \u49569 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[8]');\
+    await clickElement(driver, '//*[@text="\uc0\u50672 \u46973 \u52376  \u48372 \u45236 \u44592 "]');\
+    await clickElement(driver, '//*[@text="\uc0\u12593 .\u47560 \u44536  \u51088 \u46041 \u54868  \u50672 \u46973 \u52376 "]');\
+    await clickElement(driver, '//*[@text="\uc0\u51204 \u49569 "]');\
+\
+    //+\uc0\u47700 \u45684  \u49440 \u53469 \u54616 \u44592 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');\
+\
+    // \uc0\u45796 \u51020  \u47700 \u45684 \u47196  \u51060 \u46041 \
+    await clickElement(driver, '//android.widget.ImageView[@content-desc="\uc0\u45796 \u51020 "]');\
+\
+    // \uc0\u54028 \u51068  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[1]');\
+\
+    // \uc0\u54028 \u51068  \u51204 \u49569 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.android.documentsui:id/icon_thumb"])[1]');\
+\
+    // \uc0\u48036 \u51649  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[2]');\
+    await driver.pause(5000);\
+    await setValue(driver, '//android.widget.EditText[@resource-id="search__word"]', "Hype boy");\
+    await clickElement(driver, '//android.widget.Button[@text="\uc0\u52286 \u44592 "]');\
+\
+    // \uc0\u48036 \u51649  \u45800 \u51068  \u51204 \u49569  \
+    await clickElement(driver, '//android.widget.ListView[@resource-id="commonList"]/android.view.View[1]/android.view.View[2]/android.view.View[1]');\
+    await clickElement(driver, '//android.widget.TextView[@text="\uc0\u48372 \u45236 \u44592 1"]');\
+\
+    // 5\uc0\u52488  \u45824 \u44592  \
+    await driver.pause(5000);\
+\
+    // #\uc0\u48260 \u53948  \u51228 \u48708 \u48977 \u44592  \u51204 \u49569 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search_sharp_button"]');\
+    await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/keyword" and @text="\uc0\u51228 \u48708 \u48977 \u44592 "]');\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.jordy:id/share"]');\
+\
+    // #\uc0\u48260 \u53948  \u45216 \u50472  \u51204 \u49569 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search_sharp_button"]');\
+    await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/keyword" and @text="\uc0\u45216 \u50472 "]');\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.jordy:id/share"]');\
+\
+    // #\uc0\u48260 \u53948  D-day \u51204 \u49569 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search_sharp_button"]');\
+    await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/keyword" and @text="D-DAY"]');\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.jordy:id/share"]');\
+\
+    // #\uc0\u48260 \u53948  \u53581 \u49828 \u53944  \u51649 \u51217  \u51077 \u47141  \u51204 \u49569 \
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search_sharp_button"]');\
+    await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@content-desc="\uc0\u49397 \u44160 \u49353 , \u53581 \u49828 \u53944  \u54596 \u46300 "]', `\u52852 \u52852 \u50724 `);\
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search"]');\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.jordy:id/share"]');\
+\
+    // 5\uc0\u52488  \u45824 \u44592 \
+    await driver.pause(5000);\
+\
+    // \uc0\u48177  \u53412 \
+    await driver.pressKeyCode(4);\
+\
+    // \uc0\u49444 \u51221 \u51004 \u47196  \u51060 \u46041 \
+    await clickElement(driver, '//android.widget.ImageView[@content-desc="\uc0\u50741 \u49496  \u45908 \u48372 \u44592 "]');\
+\
+    // \uc0\u51204 \u52404  \u49444 \u51221  \u49440 \u53469 \
+    await clickElement(driver, '//*[@text="\uc0\u51204 \u52404  \u49444 \u51221 "]');\
+\
+    // \uc0\u50508 \u47548  \u49440 \u53469 \
+    await clickElement(driver, '//*[@text="\uc0\u50508 \u47548 "]');\
+\
+    // \uc0\u50508 \u47548 \u51020  \u49440 \u53469 \
+    await clickElement(driver, '//*[@text="\uc0\u50508 \u47548 \u51020 "]');\
+\
+    // \uc0\u50508 \u47548 \u51020  "\u52852 \u53665 \u50772 \u50612 " \u49440 \u53469   <- \u48148 \u44984 \u44256 \u49910 \u51008  \u50508 \u47548 \u51020 \u51004 \u47196  \u48320 \u44221 \
+    await clickElement(driver, '//*[@text="\uc0\u52852 \u53665 \u50772 \u50612 "]');\
+\
+    // \uc0\u54869 \u51064  \u49440 \u53469 \
+    await clickElement(driver, '//*[@text="\uc0\u54869 \u51064 "]');\
+\
+    // \uc0\u53412 \u50892 \u46300  \u50508 \u47548  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk:id/title" and @text="\uc0\u53412 \u50892 \u46300  \u50508 \u47548 "]');\
+\
+    // \uc0\u53412 \u50892 \u46300  \u50508 \u47548  ON\
+    await clickElement(driver, '//android.widget.Switch[@resource-id="com.kakao.talk:id/switch_button"]');\
+\
+    // \uc0\u53412 \u50892 \u46300  \u50508 \u47548  \u52628 \u44032 \
+    for (let i = 1; i <= 3; i++) \{\
+      await clickElement(driver, '//android.widget.EditText');\
+      await setValue(driver, '//android.widget.EditText', `\uc0\u53412 \u50892 \u46300  \u53580 \u49828 \u53944  $\{i\}\u54924  \u52628 \u44032 `);\
+      await clickElement(driver, '//android.widget.Button[@content-desc="\uc0\u53412 \u50892 \u46300  \u52628 \u44032 "]');\
+    \}\
+\
+    // \uc0\u48177 \u53412  \u46160 \u48264  \u49892 \u54665 \
+    await driver.pressKeyCode(4);\
+    await driver.pause(5000);\
+    await driver.pressKeyCode(4);\
+    await driver.pause(5000);\
+\
+    // \uc0\u44060 \u51064 /\u48372 \u50504  \u51652 \u51077 \
+    await clickElement(driver, '(//android.widget.FrameLayout[@resource-id="com.kakao.talk:id/title_layout"])[2]');\
+\
+    // \uc0\u54868 \u47732  \u51104 \u44552  \u49440 \u53469 \
+    await clickElement(driver, '(//android.widget.FrameLayout[@resource-id="com.kakao.talk:id/title_layout"])[4]');\
+\
+    // \uc0\u48708 \u48128 \u48264 \u54840  \u49440 \u53469 \
+    await clickElement(driver, '//android.widget.RadioButton[@resource-id="com.kakao.talk:id/btn_radio" and @text="\uc0\u48708 \u48128 \u48264 \u54840 "]');\
+\
+    // 0000\uc0\u49444 \u51221 \
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk:id/keypad_0"]');\
+    await driver.pause(3000);\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk:id/keypad_0"]');\
+    await driver.pause(3000);\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk:id/keypad_0"]');\
+    await driver.pause(3000);\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk:id/keypad_0"]');\
+    await driver.pause(3000);\
+\
+    // 5\uc0\u52488  \u45824 \u44592  \u54980  0000 \u48708 \u48128 \u48264 \u54840  \u51116 \u51077 \u47141 \
+    await driver.pause(5000);\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk:id/keypad_0"]');\
+    await driver.pause(3000);\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk:id/keypad_0"]');\
+    await driver.pause(3000);\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk:id/keypad_0"]');\
+    await driver.pause(3000);\
+    await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk:id/keypad_0"]');\
+    await driver.pause(3000);\
+\
+    \
+    console.log('\uc0\u49457 \u44277 \u51201 \u51004 \u47196  \u51333 \u47308 ')\
+\
+    sendSlackMessage('\uc0\u51088 \u46041 \u54868  \u53580 \u49828 \u53944  \u50756 \u47308 ');\
+  \}\
+  catch (e) \{\
+    console.log(e);\
+    sendSlackMessage(`error: $\{getErrorLineNumber(e)\} Line, $\{e.message\}`);\
+  \}\
+  finally \{\
+    await driver.pause(3000);\
+    await driver.deleteSession();\
+  \}\
+\}\
+\
+runTest().catch(console.error);}
